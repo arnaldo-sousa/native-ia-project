@@ -1229,10 +1229,41 @@
         }
 
         @media (max-width: 768px) {
-            .nav-links {
-                display: none;
+
+            /* Navegação ajustada para mobile */
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem 0;
             }
 
+            .logo {
+                margin-bottom: 0.5rem;
+            }
+
+            .nav-links {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: flex-start;
+                gap: 0.5rem;
+                margin-top: 1rem;
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+
+            .nav-links a {
+                font-size: 0.75rem;
+                padding: 0.3rem 0.6rem;
+                white-space: nowrap;
+            }
+
+            .nav-links a.tag-resumo {
+                font-size: 0.75rem;
+                padding: 0.3rem 0.8rem;
+            }
+
+            /* Mantenha os ajustes existentes */
             h1 {
                 font-size: 2rem;
             }
@@ -1841,7 +1872,8 @@
                         críticas sob
                         estresse extremo sem uma única falha técnica, eliminando os riscos de instabilidade comuns em
                         stacks
-                        tradicionais de alta latência.
+                        tradicionais de alta latência. <br> MTBF (Mean Time Between Failures) -> Tempo Médio Entre
+                        Falhas
                     </p>
                 </div>
 
@@ -1855,6 +1887,8 @@
                     <div style="margin-top: 2rem; color: var(--success-green); font-weight: bold; letter-spacing: 1px;">
                         AUDITADO: 0.000s OLD GEN | OVERHEAD < 1% | 10KB/INF </div>
                     </div>
+                </div>
+            </div>
         </section>
 
         <section id="estrategia">
