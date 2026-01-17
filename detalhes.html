@@ -19,6 +19,7 @@
             --accent-blue: #58a6ff;
             --success-green: #238636;
             --warning-yellow: #d29922;
+            --primary: var(--java-orange);
         }
 
         * {
@@ -1320,6 +1321,102 @@
             .capability-body {
                 padding: 1.5rem;
             }
+
+            /* ========== NOVOS AJUSTES PARA AS CAIXINHAS ========== */
+
+            /* Ajustes para a seção density-wrapper */
+            .density-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                margin: 2rem 0;
+            }
+
+            .density-box {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .density-grid {
+                min-height: 120px;
+                margin: 1rem 0;
+            }
+
+            .density-arrow {
+                margin: 1rem 0;
+                transform: rotate(90deg);
+            }
+
+            .arrow-value {
+                font-size: 1.5rem;
+            }
+
+            .arrow-symbol {
+                font-size: 1.5rem;
+            }
+
+            /* Ajustes para o roi-grid */
+            .roi-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .roi-card {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .roi-impact {
+                font-size: 1.8rem;
+            }
+
+            /* Garantir que as caixas não se sobreponham */
+            .roi-section {
+                overflow: hidden;
+                padding: 1.5rem;
+            }
+
+            .density-count {
+                font-size: 1rem;
+            }
+
+            /* Ajustar o espaçamento do chart-note */
+            .chart-note {
+                padding-left: 0.5rem;
+                margin-top: 1rem;
+                font-size: 0.85rem;
+            }
+
+            /* Ajustar grids de densidade para telas pequenas */
+            .density-grid.density-standard {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .density-grid.density-native {
+                grid-template-columns: repeat(8, 1fr);
+            }
+
+            .pod {
+                font-size: 0.5rem;
+                padding: 0.3rem 0.1rem;
+            }
+
+            .pod-small {
+                font-size: 0.4rem;
+                padding: 0.2rem 0.05rem;
+            }
+
+            /* Estilos inline que precisam ser sobrescritos */
+            .density-box div[style*="font-size: 0.85rem"] {
+                font-size: 0.75rem !important;
+            }
+
+            .roi-description {
+                font-size: 0.85rem;
+            }
+
+            .roi-tag {
+                font-size: 0.65rem;
+            }
         }
 
         .version-tag {
@@ -1687,7 +1784,10 @@
                     </p>
                 </div>
             </div>
+        </section>
 
+
+        <section id="telemetry-roi" class="telemetry-section">
             <div class="engineering-notes">
                 <h3>Nota Técnica: Arquitetura de Zero Pausas</h3>
                 <p>
