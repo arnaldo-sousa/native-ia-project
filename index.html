@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumo Executivo - Native IA Project</title>
+    <style>
+        /* Configurações Globais - Dashboard Industrial */
+        :root {
+            --bg-dark: #0d1117;
+            --bg-card: #161b22;
+            --bg-elevated: #1c2128;
+            --text-main: #c9d1d9;
+            --text-bright: #ffffff;
+            --text-muted: #8b949e;
+            --java-orange: #e67e22;
+            --border-color: #30363d;
+            --accent-blue: #58a6ff;
+            --success-green: #238636;
+            --warning-yellow: #d29922;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        main,
+        header,
+        footer {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Navegação */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 3rem;
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-dark);
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            color: var(--java-orange);
+            text-decoration: none;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+            padding: 0.3rem 0;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--java-orange);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--java-orange);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Tags de navegação */
+        .tag-clara {
+            display: inline-block;
+            background-color: rgba(88, 166, 255, 0.1) !important;
+            color: var(--accent-blue) !important;
+            border: 1px solid var(--accent-blue) !important;
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .tag-clara:hover {
+            background-color: var(--accent-blue) !important;
+            color: white !important;
+        }
+
+        .tag-resumo {
+            display: inline-block;
+            background-color: rgba(35, 134, 54, 0.1) !important;
+            color: var(--success-green) !important;
+            border: 1px solid var(--success-green) !important;
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .tag-resumo:hover {
+            background-color: var(--success-green) !important;
+            color: white !important;
+        }
+
+        /* Hero Section */
+        .hero {
+            margin: 4rem 0;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            color: var(--text-bright);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+        }
+
+        /* Tipografia de Seções */
+        h2 {
+            font-size: 2rem;
+            color: var(--text-bright);
+            border-bottom: 2px solid var(--java-orange);
+            padding-bottom: 0.5rem;
+            margin: 4rem 0 2rem 0;
+            scroll-margin-top: 100px;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            color: var(--text-bright);
+            margin: 2rem 0 1rem 0;
+        }
+
+        .section-intro {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        /* Executive Badge */
+        .executive-badge {
+            display: inline-block;
+            background: var(--success-green);
+            color: white;
+            padding: 0.6rem 1.8rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Telemetry Grid */
+        .telemetry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .telemetry-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 6px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .telemetry-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(230, 126, 34, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .card-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--java-orange);
+            font-family: 'Courier New', monospace;
+            margin: 1rem 0;
+            text-shadow: 0 0 10px rgba(230, 126, 34, 0.2);
+        }
+
+        .card-label {
+            font-size: 0.9rem;
+            color: var(--success-green);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .card-note {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: var(--bg-elevated);
+            border-left: 4px solid var(--java-orange);
+            padding: 2rem;
+            margin: 3rem 0;
+            border-radius: 6px;
+        }
+
+        .highlight-box h3 {
+            margin-top: 0;
+            color: var(--java-orange);
+        }
+
+        /* Tabelas */
+        .arsenal-table-wrapper {
+            overflow-x: auto;
+            margin-top: 1.5rem;
+        }
+
+        .arsenal-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .arsenal-table thead {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-elevated) 100%);
+        }
+
+        .arsenal-table th {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            color: var(--java-orange);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            border-bottom: 2px solid var(--java-orange);
+        }
+
+        .arsenal-table td {
+            padding: 1rem 1.5rem;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border-color);
+            line-height: 1.6;
+        }
+
+        .arsenal-table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .arsenal-table tbody tr:hover {
+            background: rgba(230, 126, 34, 0.05);
+        }
+
+        .arsenal-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .arsenal-table td:first-child {
+            color: var(--text-bright);
+            font-weight: 600;
+        }
+
+        .arsenal-table td:nth-child(2) {
+            color: var(--accent-blue);
+            font-weight: 500;
+        }
+
+        /* Comparison Grid */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .comparison-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 6px;
+        }
+
+        .comparison-card h3 {
+            margin-top: 0;
+            color: var(--java-orange);
+        }
+
+        /* War Scenario */
+        .war-scenario {
+            margin: 4rem 0;
+        }
+
+        .verdict-box {
+            background: var(--bg-elevated);
+            border: 1px dashed var(--java-orange);
+            padding: 2rem;
+            border-radius: 6px;
+            margin-top: 2rem;
+        }
+
+        .verdict-box h4 {
+            margin-top: 0;
+            color: var(--java-orange);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin: 4rem 0;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--java-orange);
+            color: white;
+            padding: 1.2rem 3rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin: 2rem 0;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
+        }
+
+        .cta-button:hover {
+            background: #d35400;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(230, 126, 34, 0.5);
+        }
+
+        .cta-note {
+            margin-top: 2rem;
+            color: var(--text-muted);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Seção Unificada: ROI + Arsenal */
+        .unified-section {
+            background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-card) 100%);
+            border: 2px solid var(--success-green);
+            border-radius: 12px;
+            padding: 3rem;
+            margin: 4rem 0;
+            box-shadow: 0 8px 30px rgba(35, 134, 54, 0.15);
+        }
+
+        .unified-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--success-green);
+        }
+
+        .unified-header h2 {
+            border: none;
+            margin: 0 0 1rem 0;
+            padding: 0;
+            color: var(--success-green);
+        }
+
+        .unified-table {
+            margin-top: 0;
+        }
+
+        .unified-table thead {
+            background: var(--bg-elevated);
+        }
+
+        .unified-table thead th {
+            border-bottom: 2px solid var(--success-green);
+        }
+
+        .unified-footer {
+            background: rgba(35, 134, 54, 0.1);
+            border: 1px solid var(--success-green);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .unified-footer p {
+            margin: 0;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        /* Infográfico Native IA */
+        .native-ia-graphic {
+            text-align: center;
+            margin: 2rem auto;
+        }
+
+        .native-ia-figure {
+            margin: 0 auto;
+        }
+
+        .native-ia-image {
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+            mix-blend-mode: lighten;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .native-ia-caption {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .unified-section {
+                padding: 2rem 1.5rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .telemetry-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .arsenal-table {
+                font-size: 0.9rem;
+            }
+
+            .arsenal-table th,
+            .arsenal-table td {
+                padding: 0.8rem 1rem;
+            }
+        }
+
+
+
+
+        /* Ajuste para a seção sovereign-ai-summary */
+        #sovereign-ai-summary.unified-section {
+            overflow: hidden;
+        }
+
+        /* Grid de estratégias */
+        .strategy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Cards de estratégia */
+        .strategy-card {
+            background: var(--bg-elevated);
+            padding: 1.25rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .strategy-card h3 {
+            color: var(--java-orange);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .strategy-card p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Benefícios estratégicos */
+        .strategy-benefit {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+        }
+
+        .benefit-label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .benefit-text {
+            color: var(--success-green);
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: block;
+            margin-top: 0.25rem;
+        }
+
+        /* Responsividade para mobile */
+        @media (max-width: 768px) {
+            #sovereign-ai-summary.unified-section {
+                padding: 1.5rem;
+            }
+
+            .strategy-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .strategy-card {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            #sovereign-ai-summary.unified-section {
+                padding: 1rem;
+                margin: 2rem 0;
+            }
+        }
+
+
+
+
+        /* Responsividade para navegação móvel */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            /* Menu hamburguer básico - pode ser melhorado com JavaScript se necessário */
+            nav {
+                flex-wrap: wrap;
+            }
+
+            .logo {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <a href="#" class="logo"><strong>NATIVE IA PROJECT</strong></a>
+            <div class="nav-links">
+                <a href="./detalhes.html" class="tag-clara">Ver Detalhes</a>
+            </div>
+        </nav>
+
+        <div class="hero">
+            <div class="executive-badge">RESUMO EXECUTIVO</div>
+            <h1>Soberania e Eficiência: <br> Redução de até 80% em Custos de IA</h1>
+            <p class="hero-subtitle">Convertendo infraestrutura existente em sistemas de inteligência determinística com
+                arquitetura de micro-latência.</p>
+        </div>
+    </header>
+
+    <section class="native-ia-graphic" role="img"
+        aria-label="Infográfico técnico: Arquitetura nativa operando em baixo nível, acelerando modelos de IA com soberania e reduzindo custos de infraestrutura">
+        <figure class="native-ia-figure">
+            <img src="./native-ia-silicon-arch.png"
+                alt="Native IA Project: operação binária e aceleração de hardware reduzindo custos de nuvem"
+                title="Native IA Project — Eficiência de Silício e Soberania" loading="lazy" decoding="async"
+                class="native-ia-image" />
+            <figcaption class="native-ia-caption">
+                <strong>Engenharia de Precisão:</strong> Harmonizando o software ao design físico do silício para máxima
+                soberania tecnológica.
+            </figcaption>
+        </figure>
+    </section>
+
+    <main>
+        <section id="business-case">
+            <h2>Business Case: IA com Custo Computacional Marginal</h2>
+            <p class="section-intro">
+                Prova de conceito que demonstra performance industrial em hardware de 10 anos,
+                sustentando <strong>18.213 req/s</strong> com IA real — atingindo 77% do recorde mundial
+                obtido com texto estático através de engenharia de alta densidade.
+            </p>
+
+            <div class="telemetry-grid">
+                <div class="telemetry-card">
+                    <div class="card-header">
+                        <span class="card-icon">⚡</span>
+                        <span class="card-title">Performance de Pico</span>
+                    </div>
+                    <div class="card-value">18.213 req/s</div>
+                    <div class="card-label">IA Real vs Texto Estático</div>
+                    <p class="card-note">
+                        77,6% do recorde mundial (Citrine) operando em hardware 14x menor.
+                        Processamento de ML determinístico com latência p50 de 5ms.
+                    </p>
+                </div>
+
+                <div class="telemetry-card">
+                    <div class="card-header">
+                        <span class="card-icon">💾</span>
+                        <span class="card-title">Eficiência de Memória</span>
+                    </div>
+                    <div class="card-value">~10.3 KB</div>
+                    <div class="card-label">Por Inferência de IA</div>
+                    <p class="card-note">
+                        Densidade extrema: 229MB de pico sob saturação total.
+                        Zero objetos na Old Gen e eliminação de pausas "Stop-the-World".
+                    </p>
+                </div>
+
+                <div class="telemetry-card">
+                    <div class="card-header">
+                        <span class="card-icon">📊</span>
+                        <span class="card-title">Densidade de Infra</span>
+                    </div>
+                    <div class="card-value">5x Superior</div>
+                    <div class="card-label">Consolidação de Pods</div>
+                    <p class="card-note">
+                        Viabiliza 50+ instâncias por nó vs 12 do padrão de mercado.
+                        Redução direta de 90% em custos de nuvem e licenciamento.
+                    </p>
+                </div>
+            </div>
+
+            <div class="comparison-summary"
+                style="margin-top: 2rem; background: rgba(88, 166, 255, 0.05); border-radius: 8px; padding: 25px; border: 1px solid var(--border-color);">
+                <h3
+                    style="color: var(--accent-blue); margin-bottom: 1.5rem; text-transform: uppercase; font-size: 1rem; letter-spacing: 1px;">
+                    Contraste de Eficiência: Native IA vs. Recorde Mundial
+                </h3>
+
+                <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center;">
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">Recorde Mundial (Citrine)</div>
+                        <div style="font-size: 1.4rem; font-weight: bold; color: var(--text-bright);">5.864 req/s</div>
+                        <div style="font-size: 0.85rem; margin-top: 5px;">
+                            Cluster Xeon Gold - 56 Cores (28+28)<br>
+                            Rede 40Gbps | <strong>R$ 100.000+</strong>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 1.5rem; color: var(--border-color); font-weight: 300;">VS</div>
+
+                    <div style="text-align: left;">
+                        <div style="font-size: 0.85rem; color: var(--java-orange);">Native IA Project</div>
+                        <div style="font-size: 1.4rem; font-weight: bold; color: var(--java-orange);">4.553 req/s</div>
+                        <div style="font-size: 0.85rem; margin-top: 5px;">
+                            Desktop i7 Legado - 8 Cores (4+4)<br>
+                            iGPU onboard | <strong>R$ 2.000</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <p
+                    style="margin-top: 1.5rem; text-align: center; font-size: 0.95rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                    <strong>Conclusão:</strong> Entrega de <strong>77,6% da performance global</strong> processando IA
+                    real,
+                    com um custo de infraestrutura <strong>50x menor</strong> e zero dependência de GPUs dedicadas.
+                </p>
+            </div>
+
+            <div class="highlight-box">
+                <h3>Validação em Cenário de Guerra: Estresse em Hardware Legado</h3>
+                <ul style="margin-top: 1rem; padding-left: 2rem;">
+                    <li><strong>Contenção de Host:</strong> Servidor e carga (2.000 threads) disputando o mesmo silício.
+                    </li>
+                    <li><strong>Hardware de Escritório:</strong> Intel i7-7700 (2017) com RAM DDR4 2133 MT/s lenta.</li>
+                    <li><strong>Soberania de Processamento:</strong> Execução 100% em CPU/iGPU — <strong>Gráficos
+                            onboard
+                            (Intel HD 630)</strong> sem dependência de hardware NVIDIA/AMD.</li>
+                    <li><strong>Resiliência Auditada:</strong> 1.156.655 predições consecutivas com 0,0% de erro
+                        técnico.</li>
+                </ul>
+                <p style="margin-top: 1.5rem;">
+                    <strong>Veredito:</strong> A arquitetura prova que é possível democratizar a IA de alta performance
+                    sem o CAPEX proibitivo de GPUs dedicadas, utilizando apenas os recursos <strong>nativos e
+                        onboard</strong> já
+                    existentes na infraestrutura legada.
+                </p>
+                <div
+                    style="margin-top: 1.5rem; color: var(--java-orange); font-weight: bold; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
+                    AUDITADO: 0.000s OLD GEN | IGPU ONBOARD | 18.213 REQ/S
+                </div>
+            </div>
+        </section>
+
+        <section id="roi-arsenal" class="unified-section">
+            <div class="unified-header">
+                <h2>Matriz de Eficiência e Vetores de ROI em Infraestrutura</h2>
+                <p class="section-intro">
+                    Visão estruturada da economia gerada por cada técnica de engenharia de alta precisão. Os resultados
+                    apresentados são
+                    derivados de <strong>benchmarks rigorosos comparados ao Java 22 no mesmo hardware</strong>,
+                    transformando
+                    performance técnica em redução direta, auditável e previsível de OPEX Cloud através de métricas 100%
+                    reproduzíveis.
+                </p>
+                <p
+                    style="font-size: 0.95rem; line-height: 1.5; color: var(--text-main); border-left: 3px solid var(--java-orange); padding: 5px 15px; margin: 1.5rem 0; opacity: 0.9;">
+                    <strong>Fio Condutor:</strong> O <strong>Mechanical Sympathy</strong> harmoniza o software ao design
+                    físico do silício.
+                    Observa-se máxima eficiência do hardware quando há eliminação de desperdício de ciclos de CPU,
+                    operação Off-Heap e otimização de rede.
+                </p>
+            </div>
+
+            <div class="arsenal-table-wrapper">
+                <table class="arsenal-table unified-table">
+                    <thead>
+                        <tr>
+                            <th>Pilar de Eficiência</th>
+                            <th>Foco de Custo</th>
+                            <th>Resultado Projetado para a Empresa (ROI)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            title="Implementação de Mechanical Sympathy e memória contígua via Agrona para otimizar L1/L2 Cache.">
+                            <td><strong>1. Engenharia de Densidade</strong></td>
+                            <td>CPU / Hardware</td>
+                            <td><strong>Aumento de até 77% na vazão</strong> utilizando a infraestrutura atual (Redução
+                                de OPEX entre 40% a 70%).</td>
+                        </tr>
+
+                        <tr
+                            title="Substituição de objetos tradicionais por Apache Arrow (Columnar In-Memory) Off-Heap.">
+                            <td><strong>2. Eficiência de Capital de Memória</strong></td>
+                            <td>RAM / Cloud</td>
+                            <td><strong>Economia de até 72,5% em RAM:</strong> Processamento de 3x mais dados no mesmo
+                                hardware.</td>
+                        </tr>
+
+                        <tr title="Migração de JSON para Apache Avro com Variable-Length Encoding e Bit-Packing.">
+                            <td><strong>3. Eficiência de Banda e Tráfego</strong></td>
+                            <td>Rede / Egress</td>
+                            <td><strong>Economia de até 59% em tráfego:</strong> Suporta 2.5x mais transações sem
+                                upgrade de link.</td>
+                        </tr>
+
+                        <tr
+                            title="Uso de EJML e Singular Value Decomposition para processamento vetorial nativo (SIMD/BLAS).">
+                            <td><strong>4. IA Nativa: Decisões Preditivas</strong></td>
+                            <td>IA / Hardware</td>
+                            <td><strong>Economia de até 92% em tempo de CPU:</strong> 1 milhão de decisões em 8ms sem
+                                GPUs dedicadas.</td>
+                        </tr>
+
+                        <tr title="Extração de espectro de variância para projeção em subespaços de baixa dimensão.">
+                            <td><strong>5. Compressão Estatística (SVD)</strong></td>
+                            <td>Storage / Cloud</td>
+                            <td><strong>Economia de até 90% em Storage:</strong> Consolidação de bilhões de registros em
+                                10% do espaço original.</td>
+                        </tr>
+
+                        <tr
+                            title="Uso de LMAX Disruptor e Ring Buffer para eliminar Lock Contention e overhead de sincronização.">
+                            <td><strong>6. Concorrência Lock-Free</strong></td>
+                            <td>Escalabilidade</td>
+                            <td><strong>Aumento de vazão de até 8.7x:</strong> Redução superior a 80% na latência de
+                                resposta.</td>
+                        </tr>
+
+                        <tr
+                            title="Implementação de ND4J Off-Heap com instruções AVX2/SIMD para álgebra linear de alta precisão.">
+                            <td><strong>7. Infraestrutura Zero-Waste</strong></td>
+                            <td>HPC / FinOps</td>
+                            <td><strong>Ganho de até 416x no processamento:</strong> Cálculos de risco massivos com uso
+                                mínimo da instância de nuvem.</td>
+                        </tr>
+
+                        <tr
+                            title="Análise de Componentes Principais (PCA) via kernels nativos de 64 bits para antifraude autônomo.">
+                            <td><strong>8. Detecção Autônoma de Anomalias</strong></td>
+                            <td>IA / Segurança</td>
+                            <td><strong>Economia de até 80% em banda de memória:</strong> Resposta de IA em tempo real
+                                com compactação (PCA).</td>
+                        </tr>
+
+                        <tr
+                            title="Uso de PGO (Profile-Guided Optimization) e Compilação AOT para inicialização instantânea.">
+                            <td><strong>9. Orquestração de Runtime</strong></td>
+                            <td>Startup / Escala</td>
+                            <td><strong>Economia de até 80% em RAM:</strong> Startup em milissegundos e Right-sizing
+                                imediato da infraestrutura.</td>
+                        </tr>
+
+                        <tr
+                            title="Data-Oriented Design substituindo AoS por SoA para garantir afinidade de cache L1/L2.">
+                            <td><strong>10. Micro-otimização (DOD)</strong></td>
+                            <td>Hardware / Eficiência</td>
+                            <td><strong>Ganho de até 4.6x na velocidade:</strong> Processamento de faturas 5x mais denso
+                                no hardware atual.</td>
+                        </tr>
+
+                        <tr
+                            title="Uso de Non-blocking I/O, Zero-Copy e Pooled ByteBufs (Off-heap) para fluxo contínuo de dados.">
+                            <td><strong>11. Arquitetura de Rede (Netty)</strong></td>
+                            <td>Resiliência / I/O</td>
+                            <td><strong>Aumento de até 10x na vazão:</strong> Redução drástica do custo por transação e
+                                do TCO anual.</td>
+                        </tr>
+
+                        <tr
+                            title="Uso de Virtual Threads (JEP 444) para desacoplar a concorrência das limitações do Kernel do SO.">
+                            <td><strong>12. Escalabilidade Massiva (Loom)</strong></td>
+                            <td>I/O / Densidade</td>
+                            <td><strong>Redução de TCO em até 10x:</strong> Mitigação de custos de escala horizontal
+                                (Clusters robustos).</td>
+                        </tr>
+
+                        <tr
+                            title="Ajustes de TCP Stack, Transparent Huge Pages e uso de distribuições minimalistas (Bottlerocket).">
+                            <td><strong>13. Tuning de Kernel e Infra Lean</strong></td>
+                            <td>Cloud / Sistemas</td>
+                            <td><strong>Economia de até 60% na fatura Cloud:</strong> Downsizing inteligente e
+                                maximização do silício.</td>
+                        </tr>
+
+                        <tr
+                            title="Deep Validation com metadados de versão e uso de HTTP 304 para evitar reenvio de payloads.">
+                            <td><strong>14. Inteligência de Protocolo (ETags)</strong></td>
+                            <td>Banda / CPU</td>
+                            <td><strong>Economia de até 90% em tráfego (Egress):</strong> Redução de custo operacional e
+                                carga de I/O.</td>
+                        </tr>
+
+                        <tr
+                            title="Auditoria cognitiva local via NVIDIA DGX (Arquitetura Blackwell) para otimização de código.">
+                            <td><strong>15. IA Privada e Soberania</strong></td>
+                            <td>Segurança / IP</td>
+                            <td><strong>Redução de custo de até 3x:</strong> Supercomputação local comparada a
+                                servidores enterprise tradicionais.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="unified-footer">
+                <p>
+                    <strong>Conclusão:</strong> Visão estruturada das capacidades de engenharia de precisão prontas para
+                    implementação.
+                    Este catálogo traduz intervenções técnicas em <strong>resultados financeiros auditáveis</strong>,
+                    focados na redução drástica de OPEX e na maximização do patrimônio tecnológico da companhia.
+                </p>
+            </div>
+        </section>
+
+        <!-- ESTRATÉGIA IA -->
+        <section id="sovereign-ai-summary" class="unified-section">
+            <div class="unified-header">
+                <h2>IA Soberana: Performance com Custo Fixo</h2>
+                <p class="section-intro">
+                    Substituímos a bilhetagem variável por tokens e APIs externas por uma infraestrutura de custo fixo.
+                    Esta transição <strong>extingue quotas de consumo</strong> e transforma IA em um ativo tecnológico
+                    (CAPEX) sob total controle da companhia.
+                </p>
+            </div>
+
+            <div class="strategy-grid">
+                <div class="strategy-card">
+                    <h3>▸ Motores Nativos de Alta Densidade</h3>
+                    <p>
+                        Substituição de APIs genéricas por <strong>algoritmos especializados locais</strong> para
+                        tarefas de alta frequência (OCR, Fraude, Classificação e Triagem).
+                    </p>
+                    <div class="strategy-benefit">
+                        <span class="benefit-label">Benefício Estratégico</span>
+                        <span class="benefit-text">Eliminação total de latência de rede e custos de terceiros.</span>
+                    </div>
+                </div>
+
+                <div class="strategy-card">
+                    <h3>▸ Open Weights LLMs</h3>
+                    <p>
+                        Implementação de modelos como <strong>Llama 3.3, DeepSeek-V3 e Phi-4</strong> em infraestrutura
+                        própria para automação de times Scrum e análise de dados.
+                    </p>
+                    <div class="strategy-benefit">
+                        <span class="benefit-label">Benefício Estratégico</span>
+                        <span class="benefit-text">Soberania de dados on-premise e escalabilidade ilimitada.</span>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+            <h4 style="margin-bottom: 0.75rem;">Nota de Quantização</h4>
+
+            <p style="margin-bottom: 1rem;">
+                A arquitetura suporta o uso de <strong>modelos quantizados conforme o contexto operacional</strong>,
+                equilibrando qualidade de resposta, coerência e eficiência computacional.
+            </p>
+
+            <ol style="margin-left: 1.25rem; margin-bottom: 1rem; line-height: 1.55;">
+                <li style="margin-bottom: 0.5rem;">
+                    <strong>INT8 / Q8</strong> — fidelidade praticamente idêntica ao modelo original,
+                    com menor latência e uso de memória.
+                </li>
+                <li style="margin-bottom: 0.5rem;">
+                    <strong>INT4 / Q4</strong> — alta eficiência com trade-off controlado de qualidade.
+                </li>
+                <li style="margin-bottom: 0.25rem;">
+                    <strong>INT2 / Q2</strong> — máxima compactação, priorizando desempenho e footprint mínimo.
+                </li>
+            </ol>
+
+            <p class="exec-footnote" style="font-size: 0.85rem; color: var(--text-muted);">
+                <em>
+                    A seleção do nível de quantização é orientada por métricas empíricas e previsibilidade do sistema.
+                </em>
+            </p>
+
+            <section class="contact-section">
+                <h2>Estabelecer Diálogo Técnico</h2>
+                <p>
+                    Este projeto explora o limite da performance e a soberania em modelos de inteligência executados
+                    nativamente em ecossistemas Java.
+                </p>
+                <p style="margin-top: 10px;">
+                    Para discussão metodológica (métricas, limites, replicabilidade e trade-offs), fica aberto o
+                    intercâmbio técnico por e-mail.
+                </p>
+                <a href="mailto:arnaldo.sousa@protonmail.com" class="cta-button">Intercâmbio técnico</a>
+            </section>
+
+            <footer>
+                <p>&copy; 2026 Native IA Project. Pesquisa e autoria:
+                    <a href="https://www.linkedin.com/in/arnaldo-g-sousa" target="_blank"
+                        style="color: var(--text-bright); text-decoration: none; border-bottom: 1px solid var(--java-orange);">
+                        <strong>Arnaldo Sousa</strong>
+                    </a>
+                </p>
+                <p style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--text-muted);">
+                    Pesquisa independente em Arquitetura, Engenharia de Performance e Soberania em Modelos de
+                    Inteligência.
+                    Siga no <a href="https://www.linkedin.com/in/arnaldo-g-sousa" target="_blank"
+                        style="color: var(--text-muted); text-decoration: underline;">LinkedIn</a>.
+                </p>
+            </footer>
+        </section>
+    </main>
+</body>
+
+</html>
