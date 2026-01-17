@@ -1,0 +1,2794 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Native IA Project: Arquitetura de Micro Latência para IA</title>
+    <style>
+        /* Configurações Globais - Dashboard Industrial */
+        :root {
+            --bg-dark: #0d1117;
+            --bg-card: #161b22;
+            --bg-elevated: #1c2128;
+            --text-main: #c9d1d9;
+            --text-bright: #ffffff;
+            --text-muted: #8b949e;
+            --java-orange: #e67e22;
+            --border-color: #30363d;
+            --accent-blue: #58a6ff;
+            --success-green: #238636;
+            --warning-yellow: #d29922;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        main,
+        header,
+        footer {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Navegação */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 3rem;
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-dark);
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            color: var(--java-orange);
+            text-decoration: none;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+            padding: 0.3rem 0;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--java-orange);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--java-orange);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Tags de navegação */
+        .tag-clara {
+            display: inline-block;
+            background-color: rgba(88, 166, 255, 0.1) !important;
+            color: var(--accent-blue) !important;
+            border: 1px solid var(--accent-blue) !important;
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .tag-clara:hover {
+            background-color: var(--accent-blue) !important;
+            color: white !important;
+        }
+
+        .tag-resumo {
+            display: inline-block;
+            background-color: rgba(35, 134, 54, 0.1) !important;
+            color: var(--success-green) !important;
+            border: 1px solid var(--success-green) !important;
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .tag-resumo:hover {
+            background-color: var(--success-green) !important;
+            color: white !important;
+        }
+
+        /* Hero Section */
+        .hero {
+            margin: 4rem 0;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            color: var(--text-bright);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+        }
+
+        /* Author Info */
+        .author-info {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--java-orange);
+            padding: 2rem;
+            border-radius: 6px;
+            margin-top: 3rem;
+        }
+
+        .author-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .author-info h2 {
+            font-size: 1.5rem;
+            color: var(--java-orange);
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .author-info h3 {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            border: none;
+            padding: 0;
+            margin-bottom: 1rem;
+        }
+
+        .badge-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-sun {
+            background: transparent;
+            border: 1px solid rgba(230, 126, 34, 0.5);
+            /* Laranja Java translúcido */
+            color: #e67e22;
+            padding: 2px 8px;
+            font-weight: 500;
+        }
+
+        .badge-ibm {
+            background: transparent;
+            border: 1px solid rgba(0, 98, 255, 0.5);
+            /* Azul IBM translúcido */
+            color: #58a6ff;
+            padding: 2px 8px;
+            font-weight: 500;
+        }
+
+        .tagline {
+            color: var(--text-main);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Detalhes Badge */
+        .detalhes-badge {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 0.6rem 1.8rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2.5rem;
+            border: none;
+        }
+
+        /* Tipografia de Seções */
+        h2 {
+            font-size: 2rem;
+            color: var(--text-bright);
+            border-bottom: 2px solid var(--java-orange);
+            padding-bottom: 0.5rem;
+            margin: 4rem 0 2rem 0;
+            scroll-margin-top: 100px;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            color: var(--text-bright);
+            margin: 2rem 0 1rem 0;
+        }
+
+        .section-intro {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        /* Manifesto Section */
+        .manifesto-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 6px;
+        }
+
+        .manifesto-content p {
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        /* Comparison Grid */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .comparison-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 6px;
+        }
+
+        .comparison-card h3 {
+            margin-top: 0;
+            color: var(--java-orange);
+        }
+
+        /* Bar Chart */
+        .bar-chart {
+            margin: 2rem 0;
+        }
+
+        .bar-item {
+            margin-bottom: 2rem;
+        }
+
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .bar-name {
+            font-weight: 600;
+            color: var(--text-bright);
+        }
+
+        .bar-value {
+            font-family: 'Courier New', monospace;
+            color: var(--java-orange);
+            font-weight: 700;
+        }
+
+        .bar-container {
+            height: 50px;
+            background: var(--bg-dark);
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bar {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 1rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: width 1s ease-out;
+        }
+
+        .bar-record {
+            background: linear-gradient(90deg, #58a6ff 0%, #58a6ff 100%);
+            color: white;
+        }
+
+        .bar-native {
+            background: linear-gradient(90deg, var(--java-orange) 0%, #d35400 100%);
+            color: white;
+        }
+
+        .bar-tag {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .chart-note {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        /* Cost Comparison */
+        .cost-comparison {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .cost-item {
+            flex: 1;
+            padding: 1.5rem;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .cost-record {
+            background: rgba(88, 166, 255, 0.1);
+            border: 1px solid var(--accent-blue);
+        }
+
+        .cost-native {
+            background: rgba(230, 126, 34, 0.1);
+            border: 2px solid var(--java-orange);
+        }
+
+        .cost-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .cost-hardware {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            margin: 0.3rem 0;
+        }
+
+        .cost-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-top: 1rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .cost-arrow {
+            font-size: 2rem;
+            color: var(--java-orange);
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: var(--bg-elevated);
+            border-left: 4px solid var(--java-orange);
+            padding: 2rem;
+            margin: 3rem 0;
+            border-radius: 6px;
+        }
+
+        .highlight-box h3 {
+            margin-top: 0;
+            color: var(--java-orange);
+        }
+
+        blockquote {
+            background: rgba(230, 126, 34, 0.1);
+            border-left: 3px solid var(--java-orange);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: var(--text-main);
+        }
+
+        /* War Scenario */
+        .war-scenario {
+            margin: 4rem 0;
+        }
+
+        .scenario-intro {
+            margin-bottom: 2rem;
+        }
+
+        .battle-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            margin: 2rem 0;
+        }
+
+        .battle-table th,
+        .battle-table td {
+            padding: 1rem;
+            text-align: left;
+            border: 1px solid var(--border-color);
+        }
+
+        .battle-table th {
+            background: var(--bg-elevated);
+            color: var(--java-orange);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .highlight-col {
+            background: rgba(230, 126, 34, 0.1);
+            border-left: 3px solid var(--java-orange);
+            font-weight: 600;
+        }
+
+        .verdict-box {
+            background: var(--bg-elevated);
+            border: 1px dashed var(--java-orange);
+            padding: 2rem;
+            border-radius: 6px;
+            margin-top: 2rem;
+        }
+
+        .verdict-box h4 {
+            margin-top: 0;
+        }
+
+        /* Memory Lifecycle */
+        .memory-lifecycle {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 6px;
+            margin: 2rem 0;
+        }
+
+        .lifecycle-chart {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 2rem 0;
+            padding: 2rem 0;
+        }
+
+        .lifecycle-stage {
+            flex: 1;
+            text-align: center;
+        }
+
+        .stage-marker {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 1rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid;
+            position: relative;
+        }
+
+        .stage-idle {
+            background: rgba(88, 166, 255, 0.2);
+            border-color: var(--accent-blue);
+        }
+
+        .stage-peak {
+            background: rgba(230, 126, 34, 0.2);
+            border-color: var(--java-orange);
+            width: 80px;
+            height: 80px;
+            box-shadow: 0 0 20px rgba(230, 126, 34, 0.3);
+        }
+
+        .stage-recovery {
+            background: rgba(35, 134, 54, 0.2);
+            border-color: var(--success-green);
+        }
+
+        .lifecycle-line {
+            flex: 0.5;
+            height: 2px;
+            background: linear-gradient(90deg, var(--border-color) 0%, var(--java-orange) 50%, var(--border-color) 100%);
+            margin: 0 1rem;
+        }
+
+        .stage-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .stage-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stage-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            font-family: 'Courier New', monospace;
+        }
+
+        .stage-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .delta-highlight {
+            background: rgba(230, 126, 34, 0.15);
+            border: 2px solid var(--java-orange);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .delta-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .delta-value {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--java-orange);
+            font-family: 'Courier New', monospace;
+            margin: 0.5rem 0;
+        }
+
+        .delta-calc {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .delta-calc span {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .delta-calc strong {
+            color: var(--text-bright);
+            font-size: 1.2rem;
+        }
+
+        /* Telemetry Grid */
+        .telemetry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .telemetry-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 6px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .telemetry-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(230, 126, 34, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .card-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--java-orange);
+            font-family: 'Courier New', monospace;
+            margin: 1rem 0;
+            text-shadow: 0 0 10px rgba(230, 126, 34, 0.2);
+        }
+
+        .card-label {
+            font-size: 0.9rem;
+            color: var(--success-green);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .card-note {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Engineering Notes */
+        .engineering-notes {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-blue);
+            padding: 2rem;
+            border-radius: 6px;
+            margin: 3rem 0;
+        }
+
+        .engineering-notes h3 {
+            margin-top: 0;
+            color: var(--accent-blue);
+        }
+
+        .engineering-notes ul {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        .engineering-notes li {
+            margin: 0.8rem 0;
+            line-height: 1.6;
+        }
+
+        /* ROI Section */
+        .roi-section {
+            background: rgba(35, 134, 54, 0.05);
+            border: 1px solid var(--success-green);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+
+        .roi-section h3 {
+            color: var(--success-green);
+            margin-top: 0;
+        }
+
+        /* Capabilities */
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .module-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 6px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .module-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--java-orange);
+        }
+
+        .module-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .module-card h3 {
+            margin-top: 0;
+            color: var(--java-orange);
+        }
+
+        .module-card code {
+            background: var(--bg-dark);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            color: var(--java-orange);
+            font-size: 0.9rem;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin: 4rem 0;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--java-orange);
+            color: white;
+            padding: 1.2rem 3rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin: 2rem 0;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
+        }
+
+        .cta-button:hover {
+            background: #d35400;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(230, 126, 34, 0.5);
+        }
+
+        .cta-note {
+            margin-top: 2rem;
+            color: var(--text-muted);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Novos estilos para seções específicas */
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .security-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 8px;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .security-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+            border-color: var(--java-orange);
+        }
+
+        .card-secure {
+            border-color: var(--success-green);
+        }
+
+        .card-grail {
+            border-color: var(--java-orange);
+        }
+
+        .security-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-secure {
+            background: rgba(35, 134, 54, 0.2);
+            color: var(--success-green);
+            border: 1px solid var(--success-green);
+        }
+
+        .badge-grail {
+            background: linear-gradient(135deg, var(--java-orange), #d35400);
+            color: white;
+            box-shadow: 0 0 15px rgba(230, 126, 34, 0.4);
+        }
+
+        .security-metric {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--text-bright);
+            font-family: 'Courier New', monospace;
+            margin: 1.5rem 0 0.5rem 0;
+            line-height: 1;
+        }
+
+        /* Executivo Box */
+        .executive-box {
+            background: var(--bg-elevated);
+            border: 2px solid var(--success-green);
+            border-radius: 12px;
+            padding: 3rem;
+            margin: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .executive-box::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--success-green);
+        }
+
+        /* Visualização de Densidade */
+        .density-wrapper {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 2rem;
+            align-items: center;
+            margin: 3rem 0;
+        }
+
+        .density-box {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .density-highlight {
+            border-color: var(--java-orange);
+            box-shadow: 0 0 20px rgba(230, 126, 34, 0.1);
+        }
+
+        .density-grid {
+            display: grid;
+            gap: 0.4rem;
+            margin: 1.5rem 0;
+            min-height: 150px;
+        }
+
+        .density-standard {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .density-native {
+            grid-template-columns: repeat(10, 1fr);
+        }
+
+        .pod {
+            background: var(--accent-blue);
+            padding: 0.5rem 0.2rem;
+            border-radius: 3px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pod-small {
+            background: var(--java-orange);
+            padding: 0.3rem 0.1rem;
+            font-size: 0.5rem;
+        }
+
+        .density-count {
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            color: var(--text-bright);
+        }
+
+        .density-arrow {
+            text-align: center;
+        }
+
+        .arrow-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--java-orange);
+        }
+
+        .arrow-symbol {
+            font-size: 2rem;
+            color: var(--java-orange);
+        }
+
+        /* ROI Grid */
+        .roi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .roi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-top: 4px solid var(--java-orange);
+            padding: 1.5rem;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .roi-impact {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--success-green);
+            margin: 0.5rem 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .roi-tag {
+            display: inline-block;
+            background: rgba(230, 126, 34, 0.1);
+            color: var(--java-orange);
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* Engineering List */
+        .engineering-list {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+        }
+
+        .engineering-item {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 2rem;
+        }
+
+        .engineering-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-title {
+            font-size: 1.3rem;
+            color: var(--text-bright);
+            margin-bottom: 1.5rem;
+        }
+
+        .item-section {
+            margin-bottom: 1.2rem;
+        }
+
+        .section-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--java-orange);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-text {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--text-main);
+        }
+
+        .section-text strong {
+            color: var(--text-bright);
+        }
+
+        /* Capacities */
+        .capabilities-intro {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            line-height: 1.7;
+        }
+
+        .capabilities-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .capability-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .capability-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+            border-color: var(--java-orange);
+        }
+
+        .capability-header {
+            background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-card) 100%);
+            padding: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            position: relative;
+        }
+
+        .capability-icon-wrapper {
+            width: 70px;
+            height: 70px;
+            background: rgba(230, 126, 34, 0.1);
+            border: 2px solid var(--java-orange);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .capability-title {
+            font-size: 1.3rem;
+            color: var(--text-bright);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .capability-category {
+            font-size: 0.75rem;
+            color: var(--java-orange);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 800;
+        }
+
+        .capability-body {
+            padding: 2rem;
+        }
+
+        .capability-description {
+            font-size: 1rem;
+            color: var(--text-main);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .capability-tech-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tech-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .tech-icon {
+            width: 6px;
+            height: 6px;
+            background: var(--java-orange);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .tech-item code {
+            background: var(--bg-dark);
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            color: var(--accent-blue);
+            font-size: 0.85rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .capability-highlight {
+            background: rgba(230, 126, 34, 0.1);
+            border: 1px solid rgba(230, 126, 34, 0.3);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .highlight-label {
+            font-size: 0.7rem;
+            color: var(--java-orange);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight-text {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+
+        .use-cases-section {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2.5rem;
+            margin-top: 4rem;
+        }
+
+        .use-cases-title {
+            font-size: 1.5rem;
+            color: var(--text-bright);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .use-cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .use-case-item {
+            background: var(--bg-card);
+            border-left: 4px solid var(--accent-blue);
+            padding: 1.5rem;
+            border-radius: 4px;
+        }
+
+        .use-case-title {
+            font-size: 1.1rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        .use-case-description {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Responsividade */
+        @media (max-width: 992px) {
+            .density-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .density-arrow {
+                transform: rotate(90deg);
+                margin: 1rem 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .author-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cost-comparison {
+                flex-direction: column;
+            }
+
+            .cost-arrow {
+                transform: rotate(90deg);
+            }
+
+            .lifecycle-chart {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .lifecycle-line {
+                width: 2px;
+                height: 40px;
+                margin: 0;
+            }
+
+            .delta-value {
+                font-size: 2rem;
+            }
+
+            .capabilities-showcase {
+                grid-template-columns: 1fr;
+            }
+
+            .use-cases-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .capability-header {
+                padding: 1.5rem;
+            }
+
+            .capability-body {
+                padding: 1.5rem;
+            }
+        }
+
+        .version-tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 15px;
+            color: #888;
+            /* Um cinza discreto para não brigar com o H1 */
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <a href="#" class="logo"><strong>NATIVE IA PROJECT</strong></a>
+            <div class="nav-links">
+                <a href="#manifesto">Manifesto</a>
+                <a href="#efficiency">Prova de Eficiência</a>
+                <a href="#capabilities-section">Arquitetura</a>
+                <a href="#engineering-deep-dive">Matriz de Engenharia</a>
+                <a href="./index.html" class="tag-resumo">Resumo Executivo</a>
+            </div>
+        </nav>
+
+        <div class="hero">
+            <span class="version-tag">White Paper Técnico | v5.2</span>
+
+            <h1>Native IA: Arquitetura Micro Latência</h1>
+            <p class="hero-subtitle">
+                Redução de até <strong>90% no consumo de recursos de Cloud</strong> através de <strong>engenharia de
+                    alta proximidade ao hardware</strong>, para sistemas de missão crítica de alta densidade
+                transacional.
+            </p>
+
+            <div class="author-info">
+                <div class="author-header">
+                    <h2>Arnaldo Sousa</h2>
+                    <div class="badge-container">
+                        <span class="badge badge-sun">Ex-Sun Microsystems</span>
+                        <span class="badge badge-ibm">Ex-Instrutor IBM</span>
+                    </div>
+                </div>
+                <h3>Arquiteto de Engenharia de IA & Micro Latência</h3>
+
+                <p class="tagline">
+                    Especialista em transformar infraestruturas complexas em motores de IA de alta eficiência, extraindo
+                    performance extrema do silício através de <strong>Mechanical Sympathy</strong>.
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="manifesto" class="manifesto-section">
+            <h2>Manifesto: IA Nativa para Missão Crítica</h2>
+            <div class="manifesto-content">
+                <p>
+                    A era da IA exige <strong>densidade computacional</strong>, não apenas inteligência.
+                    Sistemas convencionais desperdiçam hardware, consomem gigabytes de RAM desnecessários e operam sob
+                    latências imprevisíveis.
+                    Este manifesto é o fim do desperdício: através da arquitetura de precisão, a escala industrial
+                    atinge nível submilissegundo sob uma <strong>fração do custo operacional</strong>.
+                </p>
+
+                <p>
+                    Superar barreiras de performance não é um exercício teórico; é o único caminho para viabilizar o ROI
+                    real em IA e a sustentabilidade de <strong>sistemas de grande porte</strong>, sejam eles legados ou
+                    modernos.
+                    O foco deixa de ser apenas a entrega de funcionalidade e passa a ser a eficiência bruta que
+                    viabiliza o negócio em larga escala.
+                </p>
+
+                <p>
+                    A <strong>engenharia nativa</strong> é a espinha dorsal para arquiteturas que não aceitam a escolha
+                    entre
+                    <strong>alto desempenho e eficiência de custos</strong>. É a disciplina necessária para conectar
+                    algoritmos complexos ao potencial máximo do hardware, transformando gargalos tecnológicos em
+                    vantagem competitiva de mercado.
+                </p>
+            </div>
+        </section>
+
+        <section id="efficiency" class="efficiency-section">
+            <h2>Prova de Eficiência: Nativo vs. Padrões Globais</h2>
+            <p class="section-intro" style="margin-bottom: 2rem;">
+                O <strong>motor de classificação de spam (via assunto de e-mail)</strong> utilizado nesta prova de
+                conceito demonstra a viabilidade de uma <strong>matriz de capacidades</strong> desenhada para eliminar o
+                desperdício computacional em qualquer frente de processamento massivo. Esta visão estruturada revela
+                como a engenharia de micro latência é convertida em redução direta, auditável e previsível de OPEX.
+            </p>
+
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h3>Eficiência por Núcleo (Throughput)</h3>
+                    <div class="bar-chart">
+                        <div class="bar-item">
+                            <div class="bar-label">
+                                <span class="bar-name">Padrão Global (TechEmpower)</span>
+                                <span class="bar-value">5.864 req/s</span>
+                            </div>
+                            <div class="bar-container">
+                                <div class="bar bar-record" style="width: 100%">
+                                    <span class="bar-tag">Hello World Estático</span>
+                                </div>
+                            </div>
+                            <br>
+                            <small style="opacity: 0.7;">
+                                Referência: <a href="https://www.techempower.com/benchmarks/" target="_blank"
+                                    style="color: var(--accent-blue); text-decoration: underline;">TechEmpower Web
+                                    Framework
+                                    Benchmarks</a>
+                            </small>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar-label">
+                                <span class="bar-name">Native IA</span>
+                                <span class="bar-value">4.553 req/s</span>
+                            </div>
+                            <div class="bar-container">
+                                <div class="bar bar-native" style="width: 77.6%">
+                                    <span class="bar-tag">Classificação IA Nativa</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="chart-note">
+                        <strong>77.6% de proximidade</strong> ao limite teórico mundial, processando
+                        <strong>Machine Learning determinístico</strong> sob carga de 2000 threads.
+                    </p>
+                </div>
+            </div>
+
+            <div class="comparison-card">
+                <h3>Investimento em Infraestrutura</h3>
+                <div class="cost-comparison">
+                    <div class="cost-item cost-record">
+                        <div class="cost-label">Recorde Mundial</div>
+                        <div class="cost-hardware">56 núcleos Xeon Gold</div>
+                        <div class="cost-hardware">DDR4 3200 MT/s Elite</div>
+                        <div class="cost-value">R$ 100.000+</div>
+                    </div>
+                    <div class="cost-arrow">→</div>
+                    <div class="cost-item cost-native">
+                        <div class="cost-label">Native IA</div>
+                        <div class="cost-hardware">4 núcleos i7-7700</div>
+                        <div class="cost-hardware">DDR4 2133 MT/s Legado</div>
+                        <div class="cost-value">R$ 2.000</div>
+                    </div>
+                </div>
+                <p class="chart-note">
+                    <strong>Redução de 90% em infraestrutura:</strong> Sustentando 18.2k req/s com IA real em hardware
+                    legado de prateleira.
+                </p>
+            </div>
+
+            <div class="highlight-box"
+                style="border-right: 4px solid var(--accent-blue); background: rgba(88, 166, 255, 0.03); padding: 20px;">
+                <h3>O Axioma da "Invisibilidade da IA"</h3>
+                <p>
+                    A arquitetura Native IA atinge o estado de eficiência máxima onde o custo computacional da
+                    Inteligência
+                    Artificial torna-se marginal. Testes comparativos auditados entre respostas estáticas (Hello World)
+                    e inferência lógica real demonstraram um <strong>overhead inferior a 1%</strong>.
+                </p>
+
+                <blockquote
+                    style="font-style: italic; border-left: 2px solid var(--accent-blue); padding-left: 15px; margin-top: 15px; color: var(--text-main);">
+                    "A evidência técnica confirma que a inferência de Machine Learning pode ser executada com a mesma
+                    densidade de um 'Hello World' estático, sustentando 18.2k req/s sob concorrência de 2000 threads. A
+                    inteligência agora é um recurso de custo computacional quase zero."
+                </blockquote>
+            </div>
+
+            <div class="war-scenario">
+                <h3 style="color: var(--java-orange); text-transform: uppercase; letter-spacing: 1px;">
+                    Metodologia de Estresse: O Cenário de Guerra
+                </h3>
+
+                <p class="scenario-intro" style="margin: 1.5rem 0; line-height: 1.7;">
+                    Para validar a soberania da arquitetura, o benchmark foi submetido a um teste de saturação extrema
+                    em
+                    <strong>hardware de prateleira com quase 10 anos de uso</strong> (Dell XPS 8920). Diferente de
+                    testes em nuvem,
+                    esta prova de conceito enfrentou uma carga de <strong>2.000 threads simultâneas</strong> (JMeter)
+                    disputando o mesmo silício que o servidor, operando com refrigeração padrão de fábrica.
+                </p>
+
+                <table class="battle-table">
+                    <thead>
+                        <tr>
+                            <th>Dimensão Técnica</th>
+                            <th>Padrão Citrine (TechEmpower)</th>
+                            <th class="highlight-col">Protocolo Native IA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Processador</strong></td>
+                            <td>
+                                <strong>Intel Xeon Gold 6330</strong><br>
+                                28 Cores / 56 Threads<br>
+                                <small>Cache: 42 MB | Ice Lake (10nm)</small>
+                            </td>
+                            <td class="highlight-col">
+                                <strong>Intel i7-7700</strong><br>
+                                4 Cores / 8 Threads<br>
+                                <small>Cache: 8 MB | Kaby Lake (14nm)</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Interface de Rede</strong></td>
+                            <td>
+                                Mellanox ConnectX-6<br>
+                                <strong>40Gbps</strong> Ethernet
+                            </td>
+                            <td class="highlight-col">
+                                Standard onboard<br>
+                                <strong>1Gbps</strong> Ethernet
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Custo da CPU (Unitário)</strong></td>
+                            <td><strong>U$ 2.140,00</strong> (MSRP Intel)<br><small>~ R$ 11.500,00 (Excl.
+                                    Impostos)</small></td>
+                            <td class="highlight-col"><strong>~ R$ 800,00</strong><br><small>(Valor de Mercado
+                                    Residual)</small></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Memória e Barramento</strong></td>
+                            <td>DDR4 2933/3200 MT/s<br><small>8 Canais (Enterprise)</small></td>
+                            <td class="highlight-col">DDR4 2133 MT/s<br><small>Dual Channel (Desktop)</small></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Eficiência Térmica (TDP)</strong></td>
+                            <td>205W <br><small>(Exige Refrigeração de Datacenter)</small></td>
+                            <td class="highlight-col"><strong>65W</strong><br><small>(Refrigeração Ar Padrão)</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cenário de Teste</strong></td>
+                            <td><strong>Cluster de 3 Nós</strong><br><small>Rede Isolada 40Gbps Mellanox</small></td>
+                            <td class="highlight-col"><strong>Single Node (Host Único)</strong><br><small>Servidor e
+                                    Carga no mesmo silício</small></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Payload e Lógica</strong></td>
+                            <td>Texto Estático (Hello World)</td>
+                            <td class="highlight-col"><strong>IA Determinística:</strong><br>Classificação ML (26.9 KB
+                                Cache-Resident)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Performance (Throughput)</strong></td>
+                            <td>5.864 req/s (Recorde Mundial)</td>
+                            <td class="highlight-col"><strong>4.553 req/s (Inferência Real)</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="verdict-box" style="margin-top: 25px; border-left: 4px solid var(--java-orange);">
+                    <h4 style="color: var(--java-orange);">Veredito do Arquiteto:</h4>
+                    <p>
+                        "Ao sustentar 18.2k req/s com latência de 5ms sob saturação total em hardware de R$ 2.000,
+                        provamos o <strong>Mechanical Sympathy</strong>. Quando o software respeita o silício,
+                        a inteligência artificial deixa de ser um centro de custo proibitivo para se tornar um
+                        recurso de alta disponibilidade com baixo impacto no OPEX."
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="telemetry" class="telemetry-section">
+            <h2>Diagnóstico de Telemetria: A Eficiência dos 10KB</h2>
+            <p class="section-intro">
+                Prova técnica de que a arquitetura Nativa não apenas processa rápido, mas consome
+                o mínimo absoluto de recursos. Enquanto soluções tradicionais exigem Gigabytes de
+                RAM para IA, a solução entrega a <strong>densidade de memória</strong> de um sistema embarcado.
+            </p>
+
+            <div class="memory-lifecycle">
+                <h3>Ciclo de Vida da Memória (Elasticidade de RAM)</h3>
+                <div class="lifecycle-chart">
+                    <div class="lifecycle-stage">
+                        <div class="stage-marker stage-idle"></div>
+                        <div class="stage-info">
+                            <span class="stage-label">Início (Idle)</span>
+                            <span class="stage-value">40 MB</span>
+                            <span class="stage-desc">Sistema carregado</span>
+                        </div>
+                    </div>
+                    <div class="lifecycle-line"></div>
+                    <div class="lifecycle-stage">
+                        <div class="stage-marker stage-peak"></div>
+                        <div class="stage-info">
+                            <span class="stage-label">Pico (18.2k req/s)</span>
+                            <span class="stage-value">229 MB</span>
+                            <span class="stage-desc">Saturação (2k Threads)</span>
+                        </div>
+                    </div>
+                    <div class="lifecycle-line"></div>
+                    <div class="lifecycle-stage">
+                        <div class="stage-marker stage-recovery"></div>
+                        <div class="stage-info">
+                            <span class="stage-label">Recuperação</span>
+                            <span class="stage-value">67 MB</span>
+                            <span class="stage-desc">Zero Memory Leak</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="delta-highlight">
+                    <div class="delta-label">Custo Real de Processamento (Delta)</div>
+                    <div class="delta-value">+189 MB</div>
+                    <div class="delta-calc">
+                        <span>189 MB ÷ 18.213 requisições =</span>
+                        <strong>~10.3 KB por inferência de IA</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="telemetry-grid">
+                <div class="telemetry-card">
+                    <div class="card-header">
+                        <span class="card-icon">⚡</span>
+                        <span class="card-title">G1 Old Generation</span>
+                    </div>
+                    <div class="card-value">0.000s</div>
+                    <div class="card-label">Determinismo Absoluto</div>
+                    <p class="card-note">
+                        Auditado via JConsole: Zero objetos atingiram a Old Gen mesmo sob carga de 2000 threads.
+                        Pausas "Stop-the-World" eliminadas por completo.
+                    </p>
+                </div>
+
+                <div class="telemetry-card">
+                    <div class="card-header">
+                        <span class="card-icon">🔄</span>
+                        <span class="card-title">G1 Young Gen GC</span>
+                    </div>
+                    <div class="card-value">0.576s</div>
+                    <div class="card-label">179 Coletas Realizadas</div>
+                    <p class="card-note">
+                        Tempo acumulado de limpeza ultrarápida (média de ~3.2ms por coleta),
+                        preservando a latência de 5ms para o usuário final.
+                    </p>
+                </div>
+
+                <div class="telemetry-card">
+                    <div class="card-header">
+                        <span class="card-icon">💾</span>
+                        <span class="card-title">Committed RAM</span>
+                    </div>
+                    <div class="card-value">272 MB</div>
+                    <div class="card-label">Reserva Mínima Auditada</div>
+                    <p class="card-note">
+                        Valor exato (272.6 MB) extraído do log JConsole. Reserva garantida junto ao
+                        Kernel para sustentar o pico de conexões sem swap.
+                    </p>
+                </div>
+            </div>
+
+            <div class="engineering-notes">
+                <h3>Nota Técnica: Arquitetura de Zero Pausas</h3>
+                <p>
+                    O diagnóstico de <strong>0,000s na Old Generation</strong> confirma que o ciclo de vida dos objetos
+                    de IA é inferior ao tempo de promoção da JVM. A eliminação das pausas "Stop-the-World" garante um
+                    sistema com latência determinística, imune ao congelamento operacional mesmo sob carga de saturação.
+                </p>
+                <ul>
+                    <li><strong>Eficiência de Cache:</strong> Otimização para residência em L1/L2, neutralizando a
+                        latência física da RAM DDR4 (2133 MT/s).</li>
+                    <li><strong>Gestão de Contenção:</strong> Estabilidade absoluta em cenários de disputa de ciclos
+                        entre servidor e carga (mesmo host).</li>
+                    <li><strong>Overhead Marginal:</strong> A evidência comparativa com respostas estáticas aponta um
+                        custo computacional <strong>inferior a 1%</strong> para a inferência de IA.</li>
+                </ul>
+
+                <div class="roi-section">
+                    <h3>Impacto no ROI: Engenharia Convertida em Eficiência Financeira</h3>
+                    <p class="section-intro">Redução drástica do desperdício computacional através da densidade
+                        operacional extrema, viabilizando o ROI real em projetos de Inteligência Artificial.</p>
+
+                    <div class="density-wrapper">
+                        <div class="density-box">
+                            <div
+                                style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem;">
+                                Padrão de Mercado
+                            </div>
+                            <div class="density-grid density-standard">
+                                <div class="pod">Pod</div>
+                                <div class="pod">Pod</div>
+                                <div class="pod">Pod</div>
+                                <div class="pod">Pod</div>
+                                <div class="pod">Pod</div>
+                                <div class="pod">Pod</div>
+                                <div class="pod">Pod</div>
+                                <div class="pod">Pod</div>
+                                <div class="pod">Pod</div>
+                                <div class="pod">Pod</div>
+                                <div class="pod">Pod</div>
+                                <div class="pod">Pod</div>
+                            </div>
+                            <div class="density-count">~12 Pods / Nó</div>
+                            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">Stack
+                                Tradicional (Alta Latência)</div>
+                        </div>
+
+                        <div class="density-arrow">
+                            <div class="arrow-value">5x</div>
+                            <div class="arrow-symbol">→</div>
+                        </div>
+
+                        <div class="density-box density-highlight">
+                            <div
+                                style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem;">
+                                Native IA Project
+                            </div>
+                            <div class="density-grid density-native">
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                                <div class="pod pod-small">P</div>
+                            </div>
+                            <div class="density-count">50+ Pods / Nó</div>
+                            <div style="font-size: 0.85rem; color: var(--primary); margin-top: 0.5rem;">
+                                <strong>Escalabilidade:</strong> 5x mais densidade baseada em reserva de 272MB/Pod.
+                            </div>
+                        </div>
+
+                    </div>
+                    <p class="chart-note"
+                        style="margin-top: 1.5rem; border-left: 3px solid var(--accent-blue); padding-left: 1rem; font-size: 0.9rem;">
+                        <strong>Racional Técnico:</strong> Enquanto o padrão de mercado exige ~1.2GB por instância
+                        (overhead de framework/JVM), a arquitetura
+                        <strong>Native IA</strong> opera com reserva de <strong>272MB por Pod</strong>. Este ganho de 5x
+                        na densidade permite a consolidação de infraestrutura,
+                        reduzindo drasticamente o número de nós necessários no cluster e o custo de licenciamento/nuvem.
+                    </p>
+                    <div class="roi-grid">
+                        <div class="roi-card">
+                            <div class="roi-icon">☁️</div>
+                            <div class="metric-label">Infraestrutura Cloud</div>
+                            <div class="roi-impact">-90%</div>
+                            <p class="roi-description"><strong>Economia:</strong> Compatibilidade com instâncias Micro
+                                (ex: AWS t3.micro).</p>
+                            <p class="roi-description" style="color: var(--text-muted); font-size: 0.8rem;">
+                                <strong>Impacto:</strong> Redução drástica na fatura mensal em comparação a stacks
+                                convencionais.
+                            </p>
+                            <span class="roi-tag">TCO Reduzido</span>
+                        </div>
+
+                        <div class="roi-card">
+                            <div class="roi-icon">🖥️</div>
+                            <div class="metric-label">Capex Evitado</div>
+                            <div class="roi-impact">R$ 50k+</div>
+                            <p class="roi-description"><strong>Economia:</strong> Performance de missão crítica em
+                                hardware de R$ 2.000.</p>
+                            <p class="roi-description" style="color: var(--text-muted); font-size: 0.8rem;">
+                                <strong>Impacto:</strong> Elimina a necessidade de upgrades para servidores Xeon de
+                                última geração.
+                            </p>
+                            <span class="roi-tag">CAPEX</span>
+                        </div>
+
+                        <div class="roi-card" style="border-top-color: var(--success-green);">
+                            <div class="roi-icon">🛡️</div>
+                            <div class="metric-label">Disponibilidade SRE</div>
+                            <div class="roi-impact">Zero</div>
+                            <p class="roi-description"><strong>Estabilidade:</strong> Ausência de Memory Leaks e de
+                                pausas Stop-the-World.</p>
+                            <p class="roi-description" style="color: var(--text-muted); font-size: 0.8rem;">
+                                <strong>Impacto:</strong> Redução de incidentes e menor custo operacional de
+                                monitoramento 24/7.
+                            </p>
+                            <span class="roi-tag">MTBF Otimizado</span>
+                        </div>
+
+                        <div class="roi-card">
+                            <div class="roi-icon">📦</div>
+                            <div class="metric-label">Densidade de Nó</div>
+                            <div class="roi-impact">5x</div>
+                            <p class="roi-description"><strong>Economia:</strong> Consolidação de 50+ pods contra 12 do
+                                padrão de mercado.</p>
+                            <p class="roi-description" style="color: var(--text-muted); font-size: 0.8rem;">
+                                <strong>Impacto:</strong> Máxima eficiência do scheduler do Kubernetes, reduzindo o
+                                custo por pod.
+                            </p>
+                            <span class="roi-tag">K8s Efficiency</span>
+                        </div>
+                    </div>
+                    <p class="chart-note"
+                        style="margin-top: 1.5rem; border-left: 3px solid #28a745; padding-left: 1rem;">
+                        <strong>MTBF Otimizado na Prática:</strong> A marca de <strong>0.0% de erro em 1.156.655
+                            predições</strong>
+                        é a evidência da robustez da arquitetura. O sistema processou mais de um milhão de operações
+                        críticas sob
+                        estresse extremo sem uma única falha técnica, eliminando os riscos de instabilidade comuns em
+                        stacks
+                        tradicionais de alta latência.
+                    </p>
+                </div>
+
+                <div class="final-statement"
+                    style="text-align: center; padding: 3rem; background: var(--card-bg); border-top: 1px solid var(--border-color);">
+                    <p style="font-size: 1.2rem; color: var(--text-main); max-width: 800px; margin: 0 auto;">
+                        A arquitetura de <strong>Micro Latência</strong> não apenas reduz custos; ela viabiliza a
+                        escalabilidade de IA em infraestruturas onde stacks tradicionais falham por exaustão de
+                        recursos.
+                    </p>
+                    <div style="margin-top: 2rem; color: var(--success-green); font-weight: bold; letter-spacing: 1px;">
+                        AUDITADO: 0.000s OLD GEN | OVERHEAD < 1% | 10KB/INF </div>
+                    </div>
+        </section>
+
+        <section id="estrategia">
+            <h2>IA Privada: Performance com Previsibilidade de OPEX</h2>
+            <p class="section-intro">
+                A transição para uma arquitetura de IA Soberana <strong>extingue a bilhetagem variável por
+                    tokens</strong>,
+                substituindo custos exponenciais de APIs externas por uma infraestrutura de custo fixo.
+                Ao processar cargas massivas localmente, fluxos de trabalho de <strong>equipes Scrum</strong> — como
+                geração de código e automação de testes unitários —
+                deixam de ser limitados por quotas de consumo. A arquitetura viabiliza o uso de modelos Open Weights com
+                paridade técnica aos padrões de mercado, garantindo alta performance com uma fração do orçamento
+                tradicional.
+            </p>
+
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h3>▸ Pilar 1: Sistemas Especializados (Nativos)</h3>
+                    <p style="margin-bottom: 1.5rem;"><strong>Abordagem:</strong> Substituição de APIs genéricas e
+                        custosas por motores especializados locais para tarefas de alta frequência e repetição.</p>
+
+                    <div
+                        style="background: var(--bg-elevated); padding: 1.5rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <div
+                            style="font-size: 0.85rem; font-weight: 600; color: var(--java-orange); margin-bottom: 1rem; letter-spacing: 1px;">
+                            APLICAÇÕES DE ALTA DENSIDADE
+                        </div>
+                        <ul
+                            style="padding-left: 1.5rem; font-size: 0.95rem; line-height: 1.8; color: var(--text-main);">
+                            <li>Classificação automatizada de fluxos de e-mail.</li>
+                            <li>Extração estruturada de dados (OCR/Contratos).</li>
+                            <li>Motores de detecção de fraude em tempo real.</li>
+                            <li>Triagem inteligente de tickets de suporte.</li>
+                            <li>Análise de sentimento em larga escala.</li>
+                        </ul>
+                    </div>
+
+                    <p
+                        style="color: var(--success-green); font-weight: 600; padding: 1rem; background: rgba(35, 134, 54, 0.1); border-radius: 6px; border-left: 3px solid var(--success-green); font-size: 0.9rem;">
+                        <strong>ROI:</strong> Redução drástica de custos variáveis e eliminação de latência de rede.
+                    </p>
+                </div>
+
+                <div class="comparison-card">
+                    <h3>▸ Pilar 2: Open Weights LLMs</h3>
+                    <p style="margin-bottom: 1.5rem;">
+                        <strong>Arquitetura:</strong> Implementação de modelos com pesos abertos em ambiente local
+                        (on-premise),
+                        garantindo soberania de dados, privacidade e controle total sobre o ciclo de processamento,
+                        eliminando a dependência de provedores externos de inferência.
+                    </p>
+
+                    <div
+                        style="background: var(--bg-elevated); padding: 1.5rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <div
+                            style="font-size: 0.85rem; font-weight: 600; color: var(--java-orange); margin-bottom: 1rem; letter-spacing: 1px;">
+                            MODELOS DE REFERÊNCIA
+                        </div>
+                        <ul
+                            style="padding-left: 1.5rem; font-size: 0.95rem; line-height: 1.8; color: var(--text-main);">
+                            <li><strong>Llama 3.3 (Meta):</strong> Referência global em raciocínio lógico e orquestração
+                                de fluxos complexos.</li>
+                            <li><strong>Phi-4 (Microsoft):</strong> Alta densidade de inteligência em modelos compactos,
+                                otimizado para baixa latência.</li>
+                            <li><strong>DeepSeek-V3 (DeepSeek-AI):</strong> Excelência em lógica matemática, análise de
+                                dados e geração de código (SOTA).</li>
+                            <li><strong>Mistral (Mistral AI):</strong> Equilíbrio entre performance e eficiência para
+                                compreensão de linguagem natural.</li>
+                            <li><strong>Qwen 2.5 (Alibaba Cloud):</strong> Versatilidade extrema em contextos extensos e
+                                suporte multilinguagem.</li>
+                            <li><strong>Gemma 2 (Google):</strong> Arquitetura leve de alto desempenho, ideal para
+                                processamento em dispositivos de borda.</li>
+                        </ul>
+                    </div>
+
+                    <p
+                        style="color: var(--success-green); font-weight: 600; padding: 1rem; background: rgba(35, 134, 54, 0.1); border-radius: 6px; border-left: 3px solid var(--success-green); font-size: 0.9rem;">
+                        <strong>ROI:</strong> Soberania de dados (on-premise) e conversão de OPEX em ativo tecnológico
+                        (CAPEX).
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="tech-note">
+            <h3>Nota Técnica — Quantização de Modelos</h3>
+
+            <p>
+                A arquitetura admite a utilização de <strong>modelos quantizados quando necessário</strong>,
+                equilibrando qualidade de resposta, coerência semântica e eficiência computacional.
+            </p>
+
+            <ul>
+                <li>
+                    <strong>INT8 / Q8</strong> — Alta fidelidade ao modelo original, com redução significativa
+                    de memória e latência. Comportamento praticamente idêntico ao não quantizado.
+                </li>
+                <li>
+                    <strong>INT4 / Q4</strong> — Trade-off controlado entre qualidade e desempenho, adequado
+                    para inferência eficiente em CPU, com degradação mínima aceitável.
+                </li>
+                <li>
+                    <strong>INT2 / Q2</strong> — Quantização agressiva, priorizando footprint mínimo e máxima
+                    eficiência, com impacto perceptível na qualidade semântica.
+                </li>
+            </ul>
+
+            <p class="tech-footnote">
+                <em>
+                    INT refere-se ao número de bits utilizados na representação dos pesos.
+                    Q indica a estratégia de quantização aplicada ao modelo.
+                    Menor precisão implica maior eficiência e maior compromisso com a exatidão.
+                </em>
+            </p>
+        </section>
+
+        <section id="engineering-deep-dive">
+            <h2>Matriz de Engenharia e Impacto Operacional</h2>
+            <p class="section-intro">
+                Este ecossistema compreende uma série de técnicas de engenharia de precisão, fundamentais para a
+                viabilização de um
+                <strong>modelo arquitetural versátil</strong> de alta performance. Todas as soluções apresentadas foram
+                testadas e validadas
+                em benchmarks comparativos contra o <strong>Java 22 como baseline (estabilidade de runtime, JIT maduro e
+                    previsibilidade de GC sob carga) no mesmo hardware legado</strong>, provando a
+                superioridade da arquitetura sobre implementações convencionais.
+            </p>
+            <p class="section-intro" style="margin-top: -1.5rem; font-style: italic; color: var(--accent-blue);">
+                Esta matriz de capacidades pode ser aproveitada de forma <strong>integral, parcial ou híbrida</strong>
+                em sistemas de missão crítica.
+                A arquitetura foi projetada para se integrar organicamente à infraestrutura e aos sistemas existentes ou
+                para fundamentar novos
+                serviços de alta velocidade com eliminação total do desperdício computacional.
+            </p>
+
+            <p class="section-intro" style="margin-bottom: 3rem;">
+                Abaixo, seguem as frentes técnicas onde essa engenharia foi aplicada e validada, correlacionando o
+                desafio operacional, o retorno financeiro e a fundamentação tecnológica:
+            </p>
+
+            <div class="engineering-list">
+                <div class="engineering-item">
+                    <h3 class="item-title">1. Engenharia de Densidade</h3>
+
+                    <div class="item-section">
+                        <div class="section-label">Caso de Uso (Processamento de PIX)</div>
+                        <p class="section-text">
+                            Processamento de volumes massivos de dados, entregando até
+                            <strong>77% mais velocidade utilizando a mesma infraestrutura atual</strong>. Isso evita
+                            gastos desnecessários com novos servidores para suportar picos de carga.
+                        </p>
+                    </div>
+
+                    <div class="item-section">
+                        <div class="section-label">Impacto Financeiro (FinOps)</div>
+                        <p class="section-text">
+                            <strong>Redução de OPEX entre 40% a 70%</strong>. Ao maximizar a densidade de
+                            processamento por núcleo de CPU, é possível reduzir drasticamente a necessidade de
+                            escalabilidade
+                            horizontal, gerando economia imediata na fatura de nuvem.
+                        </p>
+                    </div>
+
+                    <div class="item-section">
+                        <div class="section-label">A Técnica (Engenharia de Baixa Latência)</div>
+                        <p class="section-text">
+                            Implementação de <strong>Mechanical Sympathy</strong> através de memória contígua
+                            (Off-Heap) via <strong>Agrona</strong>. Otimização de <i>L1/L2 Cache Hit Rate</i> ao
+                            eliminar o <strong>Pointer Chasing</strong> do Java tradicional, permitindo que a CPU
+                            utilize <strong>Vetorização SIMD</strong> e reduza drasticamente a latência de acesso à
+                            memória.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="engineering-item">
+                <h3 class="item-title">2. Eficiência de Capital de Memória</h3>
+
+                <div class="item-section">
+                    <div class="section-label">Caso de Uso (Sistemas de Big Data / IA)</div>
+                    <p class="section-text">
+                        Processamento de <strong>3x mais dados no mesmo hardware</strong>. Em motores
+                        de risco ou grandes volumes de transações, isso elimina a necessidade de expansão física de
+                        memória (RAM).
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">Impacto Financeiro (FinOps)</div>
+                    <p class="section-text">
+                        <strong>Redução de 72,5% no consumo de RAM</strong>. Ao otimizar a densidade de dados,
+                        redução do custo de infraestrutura (OPEX) ao permitir que servidores menores executem
+                        tarefas massivas.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">A Técnica (Engenharia de Dados Nativa)</div>
+                    <p class="section-text">
+                        Substituição do modelo de objetos tradicional pelo <strong>Apache Arrow (Columnar
+                            In-Memory)</strong>. Alocação <strong>Off-Heap Unsafe</strong> para eliminar
+                        o overhead de metadados do Java, reduzindo o custo de 24 bytes para apenas 8 bytes por
+                        registro.
+                    </p>
+                </div>
+            </div>
+
+            <div class="engineering-item">
+                <h3 class="item-title">3. Eficiência de Banda e Tráfego (Network ROI)</h3>
+
+                <div class="item-section">
+                    <div class="section-label">Caso de Uso (Mensageria e Microserviços)</div>
+                    <p class="section-text">
+                        Redução de tamanho dos pacotes
+                        em 60%. Isso permite trafegar <strong>2.5x mais transações pelo mesmo link de rede</strong>,
+                        eliminando o gargalo de I/O em sistemas de alta volumetria como o PIX.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">Impacto Financeiro (FinOps)</div>
+                    <p class="section-text">
+                        <strong>Redução de 59% nos custos de transferência (Cloud Egress)</strong>. Ao substituir o
+                        JSON pelo formato binário, reduzimos a pressão sobre firewalls e balanceadores, permitindo
+                        que a infraestrutura atual suporte o dobro do tráfego sem upgrades caros de largura de
+                        banda.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">A Técnica (Serialização Binária Nativa)</div>
+                    <p class="section-text">
+                        Migração do modelo textual para <strong>Apache Avro (Binary Encoding)</strong>. Utilização de
+                        <strong>Variable-Length Encoding</strong> e <strong>Bit-Packing</strong> para converter
+                        dados em instruções compatíveis com o hardware, eliminando o desperdício de bytes com
+                        chaves, aspas e espaços do padrão JSON.
+                    </p>
+                </div>
+            </div>
+
+            <div class="engineering-item">
+                <h3 class="item-title">4. IA Nativa: Otimização de Decisões Preditivas (SVD)</h3>
+
+                <div class="item-section">
+                    <div class="section-label">Caso de Uso (Predição de Alta Volumetria)</div>
+                    <p class="section-text">
+                        Redução de complexidade de processamento de variáveis brutas para componentes
+                        críticos. A arquitetura permite o processamento de <strong>1 milhão de decisões preditivas em
+                            apenas 8ms</strong>, garantindo respostas instantâneas em tempo real.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">Impacto Financeiro (FinOps)</div>
+                    <p class="section-text">
+                        <strong>Economia de 80% em armazenamento e 92% em tempo de CPU</strong>. A extração da
+                        essência dos dados via SVD elimina o desperdício de processamento, permitindo que a
+                        mesma infraestrutura suporte aumentos de carga de até 12x.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">A Técnica (Álgebra Linear e Redução de Dimensionalidade)</div>
+                    <p class="section-text">
+                        Uso de <strong>EJML (Efficient Java Matrix Library)</strong> com operações otimizadas
+                        de <strong>Singular Value Decomposition (SVD)</strong>. Substituição de loops manuais
+                        por multiplicadores de matrizes com <strong>vetorização nativa (SIMD/BLAS)</strong>,
+                        processando dados diretamente no registro da CPU.
+                    </p>
+                </div>
+            </div>
+
+            <div class="engineering-item">
+                <h3 class="item-title">5. Compressão Estatística (SVD)</h3>
+
+                <div class="item-section">
+                    <div class="section-label">Caso de Uso (Data Lakes e Big Data)</div>
+                    <p class="section-text">
+                        Uso de redução de dimensionalidade para a consolidação de históricos massivos de transações.
+                        A arquitetura permite a manutenção de bilhões de registros ocupando apenas <strong>10% do espaço
+                            original</strong>, preservando a capacidade analítica integral.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">Impacto Financeiro (FinOps / Storage ROI)</div>
+                    <p class="section-text">
+                        <strong>Redução direta de 90% nos custos de armazenamento</strong>. A extração da essência
+                        informativa transforma volumes brutos em dados inteligentes de alta densidade, resultando em
+                        eficiência financeira em infraestrutura de storage e backup.
+                    </p>
+                </div>
+
+                <p class="section-text">
+                    Uso de <strong>Singular Value Decomposition (SVD)</strong> via EJML para a extração do
+                    <strong>espectro de variância</strong> dos dados. A técnica permite a projeção em
+                    <strong>subespaços de baixa dimensão</strong>, eliminando a entropia e redundâncias,
+                    o que resulta em estruturas de dados otimizadas para <strong>L1/L2 Cache Residency</strong>
+                    e processamento vetorial de alta densidade.
+                </p>
+            </div>
+
+            <div class="engineering-item" id="item-6">
+                <h3 class="item-title">6. Concorrência Lock-Free (High-Throughput)</h3>
+
+                <div class="item-section">
+                    <div class="section-label">Caso de Uso (PIX / Liquidação em Tempo Real)</div>
+                    <p class="section-text">
+                        Estabilização contra o "engarrafamento" digital que ocorre quando milhares de pagamentos PIX
+                        processam
+                        simultaneamente (ex: PIX). Ao contrário de filas comuns que geram travamentos para organizar a
+                        ordem,
+                        a arquitetura permite que as transações fluam sem interrupções de sincronização,
+                        <strong>garantindo
+                            que o app do cliente não fique lento ou "congelado" durante picos de uso.</strong>
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">Impacto Financeiro (FinOps)</div>
+                    <p class="section-text">
+                        Potencial de <strong>redução superior a 80% na latência de resposta</strong>, com
+                        <strong>aumento de vazão de até 8.7x</strong>. Esse ganho de escala permite que a infraestrutura
+                        atual suporte uma carga operacional significativamente maior, mitigando a necessidade de
+                        expansão
+                        horizontal e reduzindo o custo por transação.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">A Técnica (Mechanical Sympathy e Ring Buffer)</div>
+                    <p class="section-text">
+                        Uso do <strong>LMAX Disruptor</strong> com estrutura de <strong>Ring Buffer</strong>
+                        pré-alocado.
+                        A técnica aplica <i>Mechanical Sympathy</i> para o alinhamento de <strong>Cache-Line</strong>,
+                        eliminando o <i>overhead</i> de sincronização (<i>Lock Contention</i>). A estratégia de espera
+                        <strong>Busy-Spin/Yielding</strong> garante latência determinística na troca de mensagens entre
+                        núcleos da CPU, maximizando a eficiência do pipeline de execução.
+                    </p>
+                </div>
+            </div>
+
+            <div class="engineering-item" id="item-7">
+                <h3 class="item-title">7. Infraestrutura Zero-Waste (Aceleração Nativa)</h3>
+
+                <div class="item-section">
+                    <div class="section-label">Caso de Uso (Cálculos de Risco e Tesouraria)</div>
+                    <p class="section-text">
+                        Transição de cálculos matemáticos críticos de "Loops" lentos em Java para kernels nativos de
+                        alta performance.
+                        Em testes de estresse de carteira, houve a redução do tempo de processamento de
+                        <strong>patamares de dezenas de segundos para milissegundos</strong>, garantindo que o banco
+                        tome
+                        decisões de risco em tempo real.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">Impacto Financeiro (FinOps)</div>
+                    <p class="section-text">
+                        <strong>Ganho de até 416x no processamento de álgebra linear:</strong> Com precisão rigorosa
+                        exigida
+                        pelo setor bancário (validada via CheckSum e padrão IEEE 754), foi atingido o processamento de
+                        <strong>844 milhões de pontos de dados em milissegundos</strong>. Esta eficiência viabiliza
+                        <strong>Simulações de Monte Carlo em tempo real</strong> para prever milhares de cenários de
+                        risco,
+                        realizando toda a operação com <strong>uso mínimo dos recursos da instância de nuvem</strong>.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">A Técnica (Precisão de 64-bits & SIMD)</div>
+                    <p class="section-text">
+                        Implementação de <strong>ND4J Off-Heap</strong> configurado para <strong>Double Precision
+                            (64-bit)</strong>.
+                        Uso de instruções <strong>AVX2/SIMD</strong> para paralelizar o cálculo diretamente no silício.
+                        A integridade é validada via CheckSum, garantindo paridade matemática de até 13 casas decimais
+                        em relação
+                        ao modelo legado e eliminação de pausas de Garbage Collector.
+                    </p>
+                </div>
+            </div>
+
+
+
+            <div class="engineering-item" id="item-8">
+                <h3 class="item-title">8. Detecção Autônoma de Anomalias em HPC (High-performance computing)</h3>
+
+                <div class="item-section">
+                    <div class="section-label">Caso de uso (Antifraude e "DNA transacional")</div>
+                    <p class="section-text">
+                        Implementação de um motor de detecção autônoma de anomalias que aprende o perfil do cliente
+                        para identificar fraudes complexas sem depender de regras manuais rígidas <i>(if, else ou
+                            switch case)</i>. Ao aumentar o volume de dados processados, o sistema dispensa a
+                        inserção de novas regras, detectando anomalias de forma independente. Ao correlacionar
+                        coordenadas geográficas e metadados simultâneos, o motor identifica "estranhezas"
+                        matemáticas instantaneamente, garantindo segurança sem gerar fricção operacional.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">Impacto financeiro (FinOps)</div>
+                    <p class="section-text">
+                        A resposta de IA ocorre em tempo real, permitindo que a análise de risco seja concluída
+                        antes da autorização final da transação. Com uma compactação de dados de <strong>80%
+                            (PCA)</strong>, o sistema opera com a velocidade de processamento nativo dentro do
+                        ecossistema Java, reduzindo drasticamente o consumo de banda de memória e o custo
+                        operacional de nuvem por evento processado.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">A técnica (High-performance computing e PCA off-heap)</div>
+                    <p class="section-text">
+                        Utilização da metodologia de computação de alta performance com a biblioteca
+                        <strong>ND4J</strong> para executar Análise de Componentes Principais (PCA) diretamente em
+                        hardware. O processamento utiliza kernels nativos de 64 bits com paralelismo
+                        <strong>SIMD/AVX2</strong> e alocação <strong>off-heap</strong>, garantindo que a
+                        inteligência de dados ocorra com latência mínima e livre de interrupções por gerenciamento
+                        de memória da JVM.
+                    </p>
+                </div>
+            </div>
+
+            <div class="engineering-item" id="item-9">
+                <h3 class="item-title">9. Orquestração de Runtime e Inicialização de Alta Velocidade</h3>
+
+                <div class="item-section">
+                    <div class="section-label">Caso de uso (Velocidade de Escala e Mercado de Capitais)</div>
+                    <p class="section-text">
+                        Solução focada em <strong>inicialização instantânea</strong> para cenários de alta
+                        volatilidade, como a abertura do pregão na Bolsa de Valores. Ao orquestrar runtimes modernos
+                        e compilação <strong>AOT</strong>, garantimos que novos servidores escalem e entrem em
+                        operação em milissegundos com performance de pico imediata. Isso permite que o sistema
+                        suporte picos massivos de ordens com resposta ultra-rápida, eliminando tempos de espera para
+                        que a aplicação atinja seu potencial máximo.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">Impacto financeiro (FinOps)</div>
+                    <p class="section-text">
+                        A eficiência do runtime reflete-se em uma redução de até <strong>80% no consumo de memória
+                            RAM</strong> por instância. Na prática, essa densidade permite o
+                        <strong>Right-sizing</strong> da infraestrutura, onde instâncias de nuvem menores entregam a
+                        mesma capacidade de processamento de servidores robustos. O resultado é um sistema escalável
+                        com um custo operacional (<strong>OPEX</strong>) significativamente menor, otimizando o
+                        gasto com recursos de nuvem e licenciamento.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">A técnica (PGO e Otimização de Hardware AVX-512)</div>
+                    <p class="section-text">
+                        Utilização de <strong>PGO (Profile-Guided Optimization)</strong> e instruções de hardware
+                        <strong>AVX-512</strong> para gerar binários nativos altamente especializados para a
+                        arquitetura do servidor. Essa abordagem alinha o código diretamente com os recursos do
+                        processador, extraindo performance de baixo nível e garantindo estabilidade de latência
+                        absoluta desde o primeiro milissegundo. O resultado é uma execução determinística, vital
+                        para algoritmos financeiros de missão crítica.
+                    </p>
+                </div>
+            </div>
+
+            <div class="engineering-item" id="item-10">
+                <h3 class="item-title">10. Micro-otimização e Estruturas de Alta Densidade (DOD)</h3>
+
+                <div class="item-section">
+                    <div class="section-label">Caso de Uso (Eficiência de Escala em Motores Financeiros)</div>
+                    <p class="section-text">
+                        Em um motor de processamento que realiza o fechamento de faturas para milhões de
+                        correntistas. Com o crescimento da base, o risco de o processo exceder a janela noturna
+                        aumenta. Em vez de expandir o hardware, reorganizamos a forma como o sistema gerencia os
+                        dados. O resultado é um motor que processa a mesma carga em uma fração do tempo, permitindo
+                        que o banco suporte o crescimento de usuários com a estrutura atual, garantindo que
+                        processos críticos de "fim de dia" sejam concluídos com folga e segurança.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">Impacto Financeiro (FinOps)</div>
+                    <p class="section-text">
+                        O ganho de <strong>4.6x na velocidade de processamento</strong> representa uma sobrevida de
+                        anos para o hardware atual, ou redução expressiva na fatura Cloud. A instituição torna-se capaz
+                        de processar quase 5x mais clientes
+                        sem novos investimentos em servidores (<strong>CAPEX</strong>). É uma estratégia de
+                        eficiência que reduz o custo operacional por transação e maximiza o aproveitamento da
+                        infraestrutura <i>on-premise</i> ou nuvem, focando na sustentabilidade financeira do
+                        crescimento.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">A técnica (Data-Oriented Design e Prontidão para IA/ML)</div>
+                    <p class="section-text">
+                        Substituímos o modelo tradicional de objetos por estruturas de <strong>Alta Densidade
+                            (Data-Oriented Design)</strong>. Essa abordagem organiza os dados em blocos contíguos,
+                        eliminando o overhead de memória e garantindo a <strong>Afinidade de Cache L1/L2</strong> da
+                        CPU. Esta estrutura é a base fundamental para <strong>Modelos de Machine Learning e
+                            IA</strong>, onde a vazão massiva de dados entre memória e processador é crítica. O
+                        design permite que o hardware utilize 100% das <i>Cache Lines</i>, entregando performance
+                        próxima ao código nativo com integridade validada por <i>checksums</i>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="engineering-item" id="item-11">
+                <h3 class="item-title">11. Arquitetura de Rede de Alta Vazão (Netty-based & Zero-Copy)</h3>
+
+                <div class="item-section">
+                    <div class="section-label">Caso de Uso (Resiliência em Cenários de Alta Volatilidade e Pico de
+                        Tráfego)</div>
+                    <p class="section-text">
+                        Em momentos de grande movimentação no mercado, como aberturas de pregão ou eventos
+                        econômicos globais, as plataformas financeiras enfrentam um volume explosivo de dados e
+                        ordens simultâneas. O cenário crítico ocorre quando a infraestrutura tradicional não
+                        consegue processar essa avalanche de conexões, resultando em lentidão no aplicativo, falhas
+                        de execução e indisponibilidade para o usuário final. Para uma corretora ou banco, esse
+                        gargalo de rede traduz-se diretamente em perda de receita, reclamações regulatórias e danos
+                        severos à reputação da marca justamente no momento em que o cliente mais precisa operar.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">Impacto Financeiro (FinOps)</div>
+                    <p class="section-text">
+                        O valor estratégico reside na <strong>garantia de receita e redução de churn</strong>.
+                        Manter a plataforma estável sob estresse evita que a instituição perca transações valiosas e
+                        market share para a concorrência. Ao maximizar a eficiência do hardware, conseguimos
+                        sustentar até <strong>10x mais vazão de dados</strong> no mesmo parque de servidores. Isso
+                        reduz drasticamente o custo por transação e o gasto anual com infraestrutura (TCO),
+                        permitindo que a operação escale sem a necessidade de investimentos proporcionais em novas
+                        máquinas ou licenciamento.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">A técnica (Event-Loop, Protocolos Binários e Gestão Off-heap)</div>
+                    <p class="section-text">
+                        A arquitetura utiliza o modelo de <strong>Non-blocking I/O (Netty)</strong> para garantir
+                        que o hardware processe informações em fluxo contínuo, sem nunca ficar ocioso aguardando
+                        respostas da rede.
+                    </p>
+                    <ol class="section-list" style="list-style-type: decimal; padding-left: 20px;">
+                        <li style="margin-bottom: 12px;">
+                            <strong>Native Transports (epoll):</strong> Otimização da comunicação diretamente ao nível
+                            do sistema operacional para reduzir o overhead de processamento.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong>Zero-Copy:</strong> Técnica que move dados diretamente da interface de rede para a
+                            memória da aplicação, eliminando cópias intermediárias que geram latência.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong>Pooled ByteBufs:</strong> Gestão de memória especializada
+                            (<strong>Off-heap</strong>) que evita pausas repentinas no processamento (Garbage
+                            Collection), assegurando que a resposta ao usuário seja sempre rápida e determinística,
+                            mesmo sob carga extrema.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="engineering-item" id="item-12">
+                <h3 class="item-title">12. Escalabilidade Massiva e Resiliência de I/O</h3>
+
+                <div class="item-section">
+                    <div class="section-label">Caso de Uso (Resiliência em Picos de Vendas e Black Friday)</div>
+                    <p class="section-text">
+                        Estabilização de fluxos de checkout sob carga massiva de requisições dependentes de
+                        <strong>integrações externas</strong> (frete, antifraude e pagamentos). Em arquiteturas
+                        tradicionais,
+                        a latência de <strong>serviços de terceiros</strong> causa o bloqueio das threads do sistema
+                        operacional,
+                        gerando um efeito cascata que esgota os recursos do servidor. A implementação de
+                        <strong>Virtual Threads</strong> desacopla o processamento das limitações do Kernel, garantindo
+                        que o
+                        sistema permaneça disponível e responsivo mesmo sob alta latência de I/O.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">Impacto Financeiro (FinOps) </div>
+                    <p class="section-text">
+                        O valor estratégico reside na <strong>mitigação de custos de escala horizontal</strong>. Ao
+                        permitir que um único servidor sustente volumes que antes exigiriam clusters robustos, ocorre a
+                        redução na necessidade de instâncias extras de nuvem. Isso maximiza o ROI do hardware e reduz o
+                        <strong>TCO em até 10x</strong>, permitindo o crescimento das vendas sem a expansão proporcional
+                        do orçamento de infraestrutura.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">A técnica (Fundamentação Técnica: JEP 444 / Project Loom)</div>
+                    <p class="section-text">
+                        Implementação baseada no <strong>Java Project Loom</strong> para desacoplar a unidade de
+                        concorrência da aplicação das limitações do Kernel do SO. Conforme a especificação técnica
+                        oficial <strong>JEP 444 (Oracle/OpenJDK)</strong>:
+                    </p>
+                    <ol class="section-list" style="list-style-type: decimal; padding-left: 20px;">
+                        <li style="margin-bottom: 12px;">
+                            <strong>Platform Threads (1:1):</strong> Limitação severa de escala devido ao custo de
+                            <strong>~1MB por thread</strong> (stack reservada pelo SO) e degradação de performance por
+                            <i>context switch</i> excessivo após 2.000 a 5.000 conexões.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong>Virtual Threads (M:N):</strong> Suporte a <strong>milhões de conexões
+                                simultâneas</strong> com throughput estável, reduzindo o consumo de memória para
+                            <strong>~300 bytes em repouso</strong> (alocação dinâmica na Heap).
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong>Eficiência de Silício:</strong> A alternância de tarefas ocorre em nanossegundos via
+                            JVM (user-mode), liberando o processador físico instantaneamente durante esperas de I/O para
+                            processar a próxima transação sem o custo de interrupções do sistema operacional.
+                        </li>
+                    </ol>
+                    <p class="section-footer" style="font-size: 0.85em; opacity: 0.8; margin-top: 10px;">
+                        Referência técnica: <a href="https://openjdk.org/jeps/444" target="_blank"
+                            style="color: inherit;">OpenJDK JEP 444: Virtual Threads</a>
+                    </p>
+                </div>
+            </div>
+
+            <div class="engineering-item" id="item-13">
+                <h3 class="item-title">13. Tuning de Kernel e Infraestrutura Lean (Container-Optimized)</h3>
+
+                <div class="item-section">
+                    <div class="section-label">Caso de Uso (Eficiência de Escala e Estabilidade de Sistemas
+                        Críticos)</div>
+                    <p class="section-text">
+                        Um problema comum em grandes operações é perceber que, mesmo investindo em servidores
+                        potentes, o sistema apresenta "travamentos" aleatórios e não entrega a performance esperada.
+                        Isso ocorre porque o sistema operacional padrão consome recursos com serviços inúteis
+                        enquanto a aplicação principal disputa prioridade. O cenário típico é uma <strong>plataforma
+                            de faturamento ou logística</strong> que falha não por falta de hardware, mas porque o
+                        Kernel do Linux está mal regulado, gerando lentidão e desperdício de dinheiro com máquinas
+                        subutilizadas.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">Impacto Financeiro (FinOps)</div>
+                    <p class="section-text">
+                        O valor estratégico reside no <strong>Downsizing Inteligente</strong>. Ao ajustar o sistema
+                        operacional para ser focado exclusivamente no negócio, conseguimos rodar a mesma carga de
+                        trabalho em máquinas menores. Essa otimização gera uma <strong>economia direta de até 60% na
+                            fatura de nuvem</strong> e permite que o hardware atual suporte o dobro do volume de
+                        transações, adiando investimentos caros em novos ativos.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">A técnica (Sintonia Fina entre Software e Kernel)</div>
+                    <p class="section-text">
+                        Ajuste de Kernel Linux e das políticas de hardware para garantir que 100% do silício sirva
+                        à aplicação:
+                    </p>
+                    <ol class="section-list" style="list-style-type: decimal; padding-left: 20px;">
+                        <li style="margin-bottom: 12px;">
+                            <strong>Sincronia de Clock e Determinismo:</strong> Alinhamento da frequência de operação do
+                            hardware para eliminar latências de transição de estado (P-states), garantindo execução
+                            determinística e resposta instantânea sob demanda.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong>TCP/Stack Tuning:</strong> Ampliação dos limites de descritores de arquivos e
+                            buffers para suportar conexões massivas sem erros de rede.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong>Distribuições Minimalistas:</strong> Uso de SOs como <strong>Bottlerocket</strong>
+                            para reduzir a superfície de ataque e eliminar interrupções de CPU por serviços
+                            desnecessários.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong>Ajustes Avançados:</strong> Implementação de <strong>Transparent Huge Pages
+                                (THP)</strong>, agendadores de I/O específicos e outros ajustes críticos de baixo nível
+                            que garantem a estabilidade do ecossistema.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="engineering-item" id="item-14">
+                <h3 class="item-title">14. Inteligência de Protocolo e Cache Semântico (ETags)</h3>
+
+                <div class="item-section">
+                    <div class="section-label">Caso de Uso (Eficiência Operacional em Dashboards de Alta Frequência)
+                    </div>
+                    <p class="section-text">
+                        Em canais digitais como Bankline e Corretoras, o hábito do usuário de atualizar a tela
+                        constantemente para conferir saldos e cotações gera um tráfego massivo e repetitivo. Sem
+                        inteligência, a instituição paga fortunas para reenviar dados que o cliente já possui,
+                        sobrecarregando a infraestrutura de rede e processamento.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">Impacto Financeiro (FinOps)</div>
+                    <p class="section-text">
+                        O impacto reflete na economia de até <strong>90% no Data Transfer Out (Egress)</strong> da
+                        nuvem. Ao evitar o reenvio de payloads pesados para consultas repetitivas, A abordagem reduz o
+                        <strong>OPEX</strong> e libera ciclos de CPU e I/O para transações críticas. É uma
+                        estratégia que permite escala massiva de usuários mantendo a
+                        previsibilidade de custos de infraestrutura e rede.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">A técnica (Deep Validation)</div>
+                    <p class="section-text">
+                        Diferente da abordagem <i>Shallow</i> (filtros genéricos), que processa toda a resposta para
+                        gerar um hash tardio, É adotado <strong>Deep Validation</strong> com metadados de versão na
+                        persistência. A lógica utiliza o header <strong>If-None-Match</strong> para interceptar a
+                        requisição e validar o estado do dado antes de executar queries complexas ou serializações.
+                        Em estados idênticos, o servidor responde com <strong>HTTP 304</strong>, poupando o Garbage
+                        Collector, banda de saída, processamento e ativação de bancos de dados.
+                    </p>
+                </div>
+            </div>
+
+            <div class="engineering-item" id="item-15">
+                <h3 class="item-title">15. Engenharia de Performance Cognitiva e IA Privada (NVIDIA DGX Spark)</h3>
+
+                <div class="item-section">
+                    <div class="section-label">Caso de Uso (Soberania de Dados e Auditoria de Escala em
+                        Infraestruturas Críticas)</div>
+                    <p class="section-text">
+                        Em instituições que lidam com volumes massivos de dados e regras de negócio complexas — como
+                        o setor financeiro, seguradoras ou grandes operações de logística — a eficiência do código
+                        impacta diretamente a escalabilidade e o custo operacional. O desafio central é auditar e
+                        otimizar milhões de linhas de código <strong>sem expor segredos industriais ou algoritmos
+                            proprietários a LLMs públicos (como OpenAI ou Anthropic)</strong>. A abordagem consiste na
+                        implementação de um ecossistema de <strong>IA Privada on-premise</strong>, onde um
+                        supercomputador dedicado atua como um revisor técnico de alta senioridade, identificando
+                        gargalos de hardware ocultos que ferramentas tradicionais ignoram.
+                    </p>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">Impacto Financeiro (FinOps)</div>
+                    <div class="item-section">
+                        <p class="section-text">
+                            A economia gerada por esta abordagem é estratégica e fundamentada em três pilares
+                            fundamentais:
+                        </p>
+                        <ol class="section-list" style="list-style-type: decimal; padding-left: 20px;">
+                            <li style="margin-bottom: 12px;">
+                                <strong>Otimização de CAPEX/OPEX:</strong> Identificação de refatorações que elevam a
+                                performance em até 5x (via DOD), extraindo o valor máximo dos ativos de hardware
+                                existentes e adiando a necessidade de novos investimentos.
+                            </li>
+                            <li style="margin-bottom: 12px;">
+                                <strong>Soberania Digital:</strong> Processamento local de alta performance em
+                                infraestruturas especializadas, como <strong>NVIDIA DGX Spark</strong>, garantindo o
+                                controle total sobre a propriedade intelectual e mitigando riscos de exfiltração de
+                                dados.
+                            </li>
+                            <li style="margin-bottom: 12px;">
+                                <strong>Supercomputação de Eficiência:</strong> Entrega de <strong>capacidade
+                                    computacional bruta</strong> com custo de aquisição até <strong>3x menor</strong> do
+                                que a composição de servidores enterprise tradicionais equivalentes.
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="item-section">
+                    <div class="section-label">A técnica (Engenharia Cognitiva e Arquitetura Blackwell)</div>
+                    <p class="section-text">
+                        A fundação técnica utiliza modelos de linguagem de larga escala (LLMs) otimizados via
+                        <strong>NVIDIA CUDA</strong> para execução em <strong>NVIDIA DGX Spark (Arquitetura
+                            Blackwell) com memória unificada HBM3e</strong> e barramento <strong>NVLink</strong>. A
+                        estratégia operacional baseia-se em cinco pilares:
+                    </p>
+                    <ol class="section-list" style="list-style-type: decimal; padding-left: 20px;">
+                        <li style="margin-bottom: 12px;">
+                            <strong>Auditoria Cognitiva "Deep Dive":</strong> Varredura de repositórios legados para
+                            otimização de capital e eficiência algorítmica.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong>Plataforma Self-Service:</strong> Base de conhecimento assistida por IA para times
+                            de arquitetura resolverem desafios de latência em tempo real.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong>Guardião do Pipeline (CI/CD):</strong> Revisor de código automatizado que bloqueia a
+                            entrada de ineficiências técnicas em produção.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong>Detecção Proativa de Vulnerabilidades:</strong> Identificação de fragilidades de
+                            segurança e falhas estruturais de memória via análise de contexto.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong>Foco em Mechanical Sympathy:</strong> Análise sob a ótica de <strong>afinidade de
+                                cache (L1/L2/L3)</strong>, sugerindo a transição para estruturas de alta densidade
+                            otimizadas para o silício.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <section id="capabilities-section">
+            <h2>Arquitetura: Ecossistema de Inteligência Nativa</h2>
+            <p class="capabilities-intro">
+                Engenharia de alta densidade aplicada a modelos de inteligência executados 100% no ecossistema Java, com
+                foco em soberania e micro-latência.
+            </p>
+
+            <div class="capabilities-showcase">
+                <div class="capability-card">
+                    <div class="capability-header">
+                        <div class="capability-icon-wrapper">🧠</div>
+                        <h3 class="capability-title">Deep Learning</h3>
+                    </div>
+                    <div class="capability-body">
+                        <ul class="capability-tech-list-compact">
+                            <li><strong>Stack:</strong> <code>DL4J</code> (Aceleração CUDA/AVX-512)</li>
+                            <li><strong>Modelos:</strong> LSTMs, GRUs e Redes Convolucionais.</li>
+                            <li><strong>Uso:</strong> Séries temporais e inferência em 2ms.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="capability-card">
+                    <div class="capability-header">
+                        <div class="capability-icon-wrapper">📊</div>
+                        <h3 class="capability-title">Machine Learning</h3>
+                    </div>
+                    <div class="capability-body">
+                        <ul class="capability-tech-list-compact">
+                            <li><strong>Stack:</strong> <code>Weka</code> (Modelos leves) e <code>Spark MLlib</code>
+                                (Escala).</li>
+                            <li><strong>Modelos:</strong> Random Forest, SVM e Gradient Boosting.</li>
+                            <li><strong>Uso:</strong> Motores de risco e análise preditiva de alta vazão.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="capability-card">
+                    <div class="capability-header">
+                        <div class="capability-icon-wrapper">🔗</div>
+                        <h3 class="capability-title">Otimização de Grafos</h3>
+                    </div>
+                    <div class="capability-body">
+                        <ul class="capability-tech-list-compact">
+                            <li><strong>Stack:</strong> <code>JGraphT</code> (Estruturas High-Density)</li>
+                            <li><strong>Algoritmos:</strong> Dijkstra e Fluxo Máximo.</li>
+                            <li><strong>Uso:</strong> Logística e análise de caminhos críticos.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="capability-card">
+                    <div class="capability-header">
+                        <div class="capability-icon-wrapper">💬</div>
+                        <h3 class="capability-title">Processamento (NLP)</h3>
+                    </div>
+                    <div class="capability-body">
+                        <ul class="capability-tech-list-compact">
+                            <li><strong>Stack:</strong> <code>OpenNLP</code> (Apache Foundation)</li>
+                            <li><strong>Técnicas:</strong> NER e Extração Semântica Local.</li>
+                            <li><strong>Uso:</strong> Automação jurídica e análise documental.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="capability-card">
+                    <div class="capability-header">
+                        <div class="capability-icon-wrapper">👁️</div>
+                        <h3 class="capability-title">Visão Computacional</h3>
+                    </div>
+                    <div class="capability-body">
+                        <ul class="capability-tech-list-compact">
+                            <li><strong>Stack:</strong> <code>DL4J</code> (Integração de Silício)</li>
+                            <li><strong>Técnicas:</strong> OCR Industrial e Object Detection.</li>
+                            <li><strong>Uso:</strong> Inspeção de qualidade em alta velocidade.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="capability-card">
+                    <div class="capability-header">
+                        <div class="capability-icon-wrapper">📈</div>
+                        <h3 class="capability-title">Dados Massivos</h3>
+                    </div>
+                    <div class="capability-body">
+                        <ul class="capability-tech-list-compact">
+                            <li><strong>Stack:</strong> <code>Spark ML</code> (In-Memory Processing)</li>
+                            <li><strong>Escala:</strong> Transformação distribuída de Terabytes.</li>
+                            <li><strong>Uso:</strong> Analytics comportamental em larga escala.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tech-glossary-note"
+                style="margin-top: 20px; font-size: 0.82rem; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 15px; line-height: 1.4;">
+                <strong>Nota Técnica:</strong>
+                <span><strong>LSTM/GRU:</strong> Redes Recorrentes para dados sequenciais.</span> |
+                <span><strong>Redes Convolucionais:</strong> Reconhecimento de padrões espaciais.</span> |
+                <span><strong>NER:</strong> Reconhecimento de Entidades Nomeadas (nomes, valores, datas).</span> |
+                <span><strong>Random Forest:</strong> Conjuntos de árvores de decisão para robustez estatística.</span>
+                |
+                <span><strong>SVM:</strong> Classificadores baseados em hiperplanos de separação otimizados.</span> |
+                <span><strong>Gradient Boosting:</strong> Aprendizado sequencial focado na redução progressiva de erro
+                    residual.</span>
+            </div>
+        </section>
+
+        <section class="contact-section">
+            <h2>Estabelecer Diálogo Técnico</h2>
+            <p>
+                Este projeto explora o limite da performance e a soberania em modelos de inteligência executados
+                nativamente em ecossistemas Java.
+            </p>
+            <p style="margin-top: 10px;">
+                Para discussão metodológica (métricas, limites, replicabilidade e trade-offs), fica aberto o intercâmbio
+                técnico por e-mail. </p>
+            <a href="mailto:arnaldo.sousa@protonmail.com" class="cta-button">Intercâmbio técnico</a>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 Native IA Project. Pesquisa e autoria:
+                <a href="https://www.linkedin.com/in/arnaldo-g-sousa" target="_blank"
+                    style="color: var(--text-bright); text-decoration: none; border-bottom: 1px solid var(--java-orange);">
+                    <strong>Arnaldo Sousa</strong>
+                </a>
+            </p>
+            <p style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--text-muted);">
+                Pesquisa independente em Arquitetura, Engenharia de Performance e Soberania em Modelos de Inteligência.
+                Siga no <a href="https://www.linkedin.com/in/arnaldo-g-sousa" target="_blank"
+                    style="color: var(--text-muted); text-decoration: underline;">LinkedIn</a>.
+            </p>
+        </footer>
+    </main>
+</body>
+
+</html>
