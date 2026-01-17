@@ -602,17 +602,34 @@
 
         /* Responsividade para navegação móvel */
         @media (max-width: 768px) {
+
+            /* Em vez de display: none, apenas ajuste o layout */
             .nav-links {
-                display: none;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+                gap: 0.5rem;
+                /* Reduz o gap para caber melhor */
+                margin-top: 0.5rem;
+                width: 100%;
             }
 
-            /* Menu hamburguer básico - pode ser melhorado com JavaScript se necessário */
+            /* Ajuste o tamanho da tag para mobile */
+            .nav-links a.tag-clara {
+                font-size: 0.75rem;
+                padding: 0.3rem 0.8rem;
+                white-space: nowrap;
+            }
+
+            /* Ajuste o layout do nav para empilhar */
             nav {
-                flex-wrap: wrap;
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem 0;
             }
 
             .logo {
-                margin-bottom: 1rem;
+                margin-bottom: 0.5rem;
             }
         }
     </style>
